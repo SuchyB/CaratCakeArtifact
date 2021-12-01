@@ -1,5 +1,5 @@
 
-![Nautilus Logo](https://lh5.googleusercontent.com/8BkFSH-06MvfV9hqSk3D5VJQWPabgfMrlkZOcd6unP2AWYZi9ZOc5sgFtXMhyAHRPHJoMtv87jxwE9214Hx2YqmcFppPnYgpTvyau1wwwhHUee5YEn5Sl0to4LNFMg9D-Q=w1280 "Nautilus Logo")
+![Nautilus Logo](https://i.ibb.co/GJs9S74/CARAT-CAKE-LOGO.png "Nautilus Logo")
 [![Build Status](https://travis-ci.com/HExSA-Lab/nautilus.svg?branch=master)](https://travis-ci.com/HExSA-Lab/nautilus)
 [![Coverity Scan Build Status](https://scan.coverity.com/projects/17390/badge.svg)](https://scan.coverity.com/projects/hexsa-lab-nautilus)
 [![CodeFactor](https://www.codefactor.io/repository/github/hexsa-lab/nautilus/badge)](https://www.codefactor.io/repository/github/hexsa-lab/nautilus)
