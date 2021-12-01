@@ -1,0 +1,221 @@
+CPU ? (): dev: devices inited
+CPU ? (): chardev: init
+CPU ? (): blkdev: init
+CPU ? (): netdev: init
+Welcome to                                         
+    _   __               __   _  __                
+   / | / /____ _ __  __ / /_ (_)/ /__  __ _____    
+  /  |/ // __ `// / / // __// // // / / // ___/    
+ / /|  // /_/ // /_/ // /_ / // // /_/ /(__  )     
+/_/ |_/ \__,_/ \__,_/ \__//_//_/ \__,_//____/  
++===============================================+  
+ Kyle C. Hale (c) 2014 | Northwestern University   
++===============================================+  
+
+Detected GenuineIntel Processor
+CPU ? (): DEBUG: Increasing kern end to 0x0661a075
+BOOTMEM: Setting up boot memory allocator
+BOOTMEM: Memory map[0] - [0x00000000 - 0x0009f000] <usable RAM>
+BOOTMEM: Memory map[1] - [0x000a0000 - 0x000a0000] <reserved>
+BOOTMEM: Memory map[2] - [0x000f0000 - 0x00100000] <reserved>
+BOOTMEM: Memory map[3] - [0x00100000 - 0xbffe0000] <usable RAM>
+BOOTMEM: Memory map[4] - [0xbffe0000 - 0xc0000000] <reserved>
+BOOTMEM: Memory map[5] - [0xfeffc000 - 0xff000000] <reserved>
+BOOTMEM: Memory map[6] - [0xfffc0000 - 0x100000000] <reserved>
+BOOTMEM: Memory map[7] - [0x100000000 - 0x440000000] <usable RAM>
+BOOTMEM: Detected 16383.523264 MB (8705 pages) of usable System RAM
+CPU ? (): DEBUG: Multiboot info size 472B
+CPU ? (): DEBUG: Image load base: 0x100040
+CPU ? (): DEBUG: Kernel Cmd line: 
+CPU ? (): DEBUG: Boot loader: GRUB 2.04-1ubuntu26.9
+CPU ? (): DEBUG: Unhandled tag type (0xa)
+CPU ? (): DEBUG: Found module: 
+CPU ? (): DEBUG:   type:     0x00000003
+CPU ? (): DEBUG:   size:     0x00000011
+CPU ? (): DEBUG:   mod_start 0x06602000
+CPU ? (): DEBUG:   mod_end   0x0661a075
+CPU ? (): DEBUG:   args:     
+CPU ? (): DEBUG: Found symbol table module
+CPU ? (): DEBUG: Multiboot2 memory map detected
+CPU ? (): DEBUG: ELF size=20, num=0, entsize=0, shndx=0, sechdr=0x06800000
+CPU ? (): DEBUG: Multiboot2 basic meminfo detected
+CPU ? (): DEBUG: Boot device: (biosdev=0xe0,slice=4294967295,part=4294967295)
+CPU ? (): DEBUG: fb addr: 0x000b8000, fb_width: 80, fb_height: 25
+CPU ? (): DEBUG: Old ACPI: rsdp=0x066011c8
+ACPI: Parsing ACPI root table (at 0x000f5a50)
+ACPI: RSDP 00000000000f5a50 00014 (v00 BOCHS )
+ACPI: RSDT 00000000bffe15c9 00030 (v01 BOCHS  BXPCRSDT 00000001 BXPC 00000001)
+ACPI: root table checksum pass
+ACPI: FACP 00000000bffe149d 00074 (v01 BOCHS  BXPCFACP 00000001 BXPC 00000001)
+ACPI: APIC 00000000bffe1511 00080 (v01 BOCHS  BXPCAPIC 00000001 BXPC 00000001)
+ACPI: HPET 00000000bffe1591 00038 (v01 BOCHS  BXPCHPET 00000001 BXPC 00000001)
+ACPI: Done parsing ACPI root table
+SMP: Detected 2 CPUs
+NUMA: Parsing ACPI NUMA information...
+NUMA: DONE.
+CPU ? (): WARNING: NUMA: Associate Domains using ADHOC METHOD
+Remapping phys mem [0x00000000 - 0x440000000] with 1GB pages
+CPU ? (): KMEM: Malloc configured to support a maximum of: 0x3fff7f000 bytes of physical memory
+BOOTMEM: Adding boot memory regions to the kernel memory pool:
+BOOTMEM:     [Domain 00 : Region 00] (0.00 MB)
+BOOTMEM:     [Domain 00 : Region 01] (2990.538752 MB)
+BOOTMEM:     [Domain 00 : Region 02] (13958.643712 MB)
+BOOTMEM:     =======
+BOOTMEM:     [TOTAL] (16949.182464 MB)
+Disabling legacy 8259 PIC
+Initializing i8254 PIT
+CPU 0 (P 0 "*none*"): dev: Added device with name i8254, type 2, flags 0x0
+CPU 0 (P 0 "*none*"): dev: Added device with name ioapic0, type 1, flags 0x0
+CPU 0 (P 0 "*none*"): waitqueue: inited
+CPU 0 (P 0 "*none*"): future: inited (seeded pool with 256 futures)
+CPU 0 (P 0 "*none*"): timer: Timers inited
+CPU 0 (P 0 "*none*"): APIC: Detected APIC 0x0 at 1000148800 Hz and cycles per us as 2598 (core at 2598000000 Hz) calibration mode=0
+CPU 0 (P 0 "*none*"): APIC: Detected APIC 0x0 CPU cycles per tick as 41 cycles (min was 41)
+CPU 0 (P 0 "*none*"): dev: Added device with name apic0, type 1, flags 0x0
+CPU 0 (P 0 "*none*"): semaphore: inited
+CPU 0 (P 0 "*none*"): msg_queue: inited
+CPU 0 (P 0 "*none*"): ps2: init
+CPU 0 (P 0 "*none*"): dev: Added device with name ps2-keyboard, type 0, flags 0x0
+PCI: Probing PCI bus...
+PCI: 0000:00:00.0 8086:1237 (rev 2)
+PCI: 0000:00:01.0 8086:7000 (rev 0)
+PCI: [0000:01.0] Multifunction Device detected
+PCI: 0000:00:01.1 8086:7010 (rev 0)
+PCI: 0000:00:01.3 8086:7113 (rev 3)
+PCI: 0000:00:02.0 1234:1111 (rev 2)
+PCI: 0000:00:03.0 8086:100e (rev 3)
+CPU 0 (P 0 "*none*"): dev: Added device with name pci0, type 3, flags 0x0
+CPU 0 (P 0 "*none*"): dev: Added device with name isa, type 3, flags 0x0
+CPU 0 (P 0 "*none*"): Scheduler: Initializing scheduler on BSP
+CPU 0 (P 1 "*unnamed*"): group_sched: Inited
+BOOTMEM: Reclaiming boot sections and data:
+BOOTMEM:     [Boot alloc. page map] (0.1096 MB)
+BOOTMEM:     [Boot page tables and stack]     (0.4096 MB)
+BOOTMEM:     =======
+BOOTMEM:     [TOTAL] (2.110536 MB)
+BOOTMEM:     Boot allocation range: 0x06a00000-0x0d804880
+CPU 0 (P 1 "*unnamed*"): KMEM:    boot range: 0x06a00000-0x0d804880   kmem private: 0x06a03000-0x0d804880
+SMP: Setting up cross-core IPI event queue
+CPU 1 (P 0 "*none*"): alloc: inited
+CPU 1 (P 0 "*none*"): aspace: inited
+CPU 1 (P 0 "*none*"): dev: Added device with name apic1, type 1, flags 0x0
+MWAIT not supported
+CPU 0 (P 1 "*unnamed*"): dev: Added device with name vga, type 0, flags 0x0
+CPU 0 (P 1 "*unnamed*"): dev: Added device with name serial-boot, type 0, flags 0x0
+CPU 0 (P 1 "*unnamed*"): chardev: register device serial0
+CPU 0 (P 1 "*unnamed*"): dev: Added device with name serial0, type 4, flags 0x0
+CPU 0 (P 1 "*unnamed*"): chardev: register device serial1
+CPU 0 (P 1 "*unnamed*"): dev: Added device with name serial1, type 4, flags 0x0
+CPU 0 (P 1 "*unnamed*"): vc: init
+List of VCs (space to regenerate, plus for new shell)
+
+a : default
+b : system-log
+c : vc-list
+CPU 0 (P 1 "*unnamed*"): vc: List launched
+CPU 0 (P 1 "*unnamed*"): ramdisk: init
+CPU 0 (P 1 "*unnamed*"): blkdev: register device ramdisk0
+CPU 0 (P 1 "*unnamed*"): dev: Added device with name ramdisk0, type 5, flags 0x0
+CPU 0 (P 1 "*unnamed*"): ramdisk: Added embedded image as ramdisk0, blocksize=512, numblocks=200000, len=102400000
+CPU 0 (P 1 "*unnamed*"): ata: init
+CPU 0 (P 1 "*unnamed*"): fs: inited
+CPU 0 (P 1 "*unnamed*"): fs: Added filesystem with name rootfs and flags 0x0
+CPU 0 (P 1 "*unnamed*"): fat32: filesystem rootfs on device ramdisk0 is attached (readonly)
+PMC: Initializing PMC subsystem
+parsing cmdline 
+CPU 0 (P 1 "*unnamed*"): Shell root-shell launched on cpu 0 as 0000000000172000
+Nautilus boot thread yielding (indefinitely)
+root-shell> exec /GCG.EXE
+CPU 0 (P 4 "root-shell"): process: Created address space
+CPU 0 (P 4 "root-shell"): process: stack address (highest stack addr): 00000000bf800000
+CPU 0 (P 4 "root-shell"): process: Entering count_and_len for loop.
+CPU 0 (P 4 "root-shell"): process: Found len of arg /CG.EXE, total len is 8. Arg count is 0.
+CPU 0 (P 4 "root-shell"): process: argc: 1, envc: 0
+CPU 0 (P 4 "root-shell"): process: Entering count_and_len for loop.
+CPU 0 (P 4 "root-shell"): process: Found len of arg OMP_NUM_THREADS=2, total len is 18. Arg count is 0.
+CPU 0 (P 4 "root-shell"): process: Found len of arg OMP_DISPLAY_ENV="TRUE", total len is 41. Arg count is 1.
+CPU 0 (P 4 "root-shell"): process: Made room on stack for 9 characters.
+CPU 0 (P 4 "root-shell"): process: Stack addr is now 00000000bf7ffff7
+CPU 0 (P 4 "root-shell"): process: Aligned stack to 8 bytes. Stack addr is now 00000000bf7ffff0
+CPU 0 (P 4 "root-shell"): process: Made room on stack for 2 pointers.
+CPU 0 (P 4 "root-shell"): process: Stack addr is now 00000000bf7fffe0
+CPU 0 (P 4 "root-shell"): process: Aligned stack to 8 bytes. Stack addr is now 00000000bf7fffe0
+CPU 0 (P 4 "root-shell"): process: copying /CG.EXE to the stack at addr 00000000bf7ffff7
+CPU 0 (P 4 "root-shell"): process: arg pointer array after adding args: 00000000bf7ffff7
+CPU 0 (P 4 "root-shell"): process: Made room on stack for 42 characters.
+CPU 0 (P 4 "root-shell"): process: Stack addr is now 00000000bf7fffb6
+CPU 0 (P 4 "root-shell"): process: Aligned stack to 8 bytes. Stack addr is now 00000000bf7fffb0
+CPU 0 (P 4 "root-shell"): process: Made room on stack for 3 pointers.
+CPU 0 (P 4 "root-shell"): process: Stack addr is now 00000000bf7fff98
+CPU 0 (P 4 "root-shell"): process: Aligned stack to 8 bytes. Stack addr is now 00000000bf7fff98
+CPU 0 (P 4 "root-shell"): process: copying OMP_NUM_THREADS=2 to the stack at addr 00000000bf7fffb6
+CPU 0 (P 4 "root-shell"): process: copying OMP_DISPLAY_ENV="TRUE" to the stack at addr 00000000bf7fffc9
+CPU 0 (P 4 "root-shell"): process: arg pointer array after adding args: 00000000bf7fffb6
+Started /CG.EXE in the background.
+root-shell> CPU 0 (P 5 "*unnamed*"): process: Entering process wrapper.
+CPU 0 (P 5 "*unnamed*"): process: After thread group
+CPU 0 (P 5 "*unnamed*"): process: Moving thread into process aspace. Aspace addr: 00000000001c7900, Process addr 00000000001c7000
+CPU 0 (P 5 "*unnamed*"): process: Sucessfully swapped to process aspace
+CPU 0 (P 5 "*unnamed*"): process: Starting executable at addr 00000000001c7b40 with 1 args
+CPU 0 (P 5 "*unnamed*"): ERROR at src/nautilus/syscalls/sys_brk.c(41): sys_brk: blob start: 00000000bc200000, stack start: 0000000080200000, max: 00000000bc200000
+CPU 0 (P 5 "*unnamed*"): WARNING : sys_fstat: Returning mocked fstat data for stdio
+
+
+ NAS Parallel Benchmarks 3.0 structured OpenMP C version - CG Benchmark
+ Size:       7000
+ Iterations:    15
+   iteration           ||r||                 zeta
+        1       1.75577866390786e-13 1.1999700372738e+01
+        2       2.28102998490821e-15 1.0345727566406e+01
+        3       2.29929812980076e-15 1.0361788013796e+01
+        4       2.25904223969286e-15 1.0362541628497e+01
+        5       2.19140434130482e-15 1.0362590585447e+01
+        6       2.26076623307409e-15 1.0362594646709e+01
+        7       2.15949942350393e-15 1.0362595039834e+01
+        8       2.16821905164632e-15 1.0362595081727e+01
+        9       2.19136957083965e-15 1.0362595086482e+01
+       10       2.13623428602257e-15 1.0362595087045e+01
+       11       2.15793560723343e-15 1.0362595087114e+01
+       12       2.07329747104467e-15 1.0362595087123e+01
+       13       2.08607003590876e-15 1.0362595087124e+01
+       14       2.05659826489763e-15 1.0362595087124e+01
+       15       2.04564683596005e-15 1.0362595087124e+01
+ Benchmark completed
+ VERIFICATION SUCCESSFUL
+ Zeta is      1.036259508712e+01
+ Error is     8.881784197001e-15
+
+
+ CG Benchmark Completed
+ Class           =                        W
+ Size            =                     7000
+ Iterations      =                       15
+ Threads         =                        1
+ Time in seconds =                     0.45
+ Mop/s total     =                   938.93
+ Operation type  =           floating point
+ Verification    =               SUCCESSFUL
+ Version         =           3.0 structured
+ Compile date    =              06 May 2021
+
+ Compile options:
+    CC           = gclang
+    CLINK        = $(NAUT)/user/framework/nld-noelle-ubuntu $(...
+    C_LIB        = (none)
+    C_INC        = -I../common
+    CFLAGS       = -O1 -Xclang -disable-llvm-passes -lm -mcmod...
+    CLINKFLAGS   = (none)
+    RAND         = randdp
+protection_profile
+---handle_protections_profile---
+average CREATE_ENTRY_AND_ADD time: 2118
+guard_address_calls: 1378823
+guard_stack_calls: 14042
+average request_permission_time: 110
+average cur_thread_time: 50
+average region_find_time: 0
+average lock_time: 0
+average process_permissions_time: 0
+average cache_check_time: 38
+example empty rdtsc interval: 24
+root-shell> 

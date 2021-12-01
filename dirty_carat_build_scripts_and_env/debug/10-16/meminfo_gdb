@@ -1,0 +1,95 @@
+For help, type "help".
+Type "apropos word" to search for commands related to "word"...
+Reading symbols from nautilus.bin...done.
+(gdb) target remote localhost:1235
+Remote debugging using localhost:1235
+panic (fmt=<optimized out>) at src/nautilus/printk.c:144
+144	   while(1);
+(gdb) thread apply all bt
+
+Thread 2 (Thread 1.2):
+#0  read_rflags () at include/nautilus/cpu.h:291
+#1  irqs_enabled () at include/nautilus/cpu_state.h:118
+#2  idle (in=<optimized out>, out=<optimized out>) at src/nautilus/idle.c:63
+#3  0x000000000032a98d in smp_ap_entry (core=<optimized out>) at src/nautilus/smp.c:448
+#4  0x0000000000000000 in ?? ()
+
+Thread 1 (Thread 1.1):
+#0  panic (fmt=<optimized out>) at src/nautilus/printk.c:144
+#1  0x00000000003be707 in nk_carat_instrument_free (address=0xc0000101) at src/aspace/carat/runtime_tables.c:302
+#2  0x000000000035cca0 in handle_meminfo (buf=<optimized out>, priv=<optimized out>) at src/nautilus/mm/kmem.c:947
+#3  0x0000000000371f4d in shell_handle_cmd (state=0x161340, buf=0xbe5fff40 "meminfo", max=80) at src/nautilus/shell.c:546
+#4  0x00000000003703ad in shell (in=<optimized out>, out=<optimized out>) at src/nautilus/shell.c:738
+#5  0x000000000032f0d0 in ?? () at src/nautilus/thread.c:502
+#6  0x0000000000000000 in ?? ()
+(gdb) up
+
+
+******** @address is not sane ******
+
+
+#1  0x00000000003be707 in nk_carat_instrument_free (address=0xc0000101) at src/aspace/carat/runtime_tables.c:302
+302		REMOVE_ENTRY (
+(gdb) up
+#2  0x000000000035cca0 in handle_meminfo (buf=<optimized out>, priv=<optimized out>) at src/nautilus/mm/kmem.c:947
+947	    free(p);
+(gdb) list
+942	}
+943	
+944	static inline void ext_free(void *p)
+945	{
+946	    // this is expanded using the free wrapper in mm.h
+947	    free(p);
+948	}
+949	
+950	static inline void *ext_realloc(void *p, size_t s)
+951	{
+(gdb) down
+#1  0x00000000003be707 in nk_carat_instrument_free (address=0xc0000101) at src/aspace/carat/runtime_tables.c:302
+302		REMOVE_ENTRY (
+(gdb) up
+#2  0x000000000035cca0 in handle_meminfo (buf=<optimized out>, priv=<optimized out>) at src/nautilus/mm/kmem.c:947
+947	    free(p);
+(gdb) print /x$p
+$1 = 0x0
+(gdb) print p
+No symbol "p" in current context.
+(gdb) list
+942	}
+943	
+944	static inline void ext_free(void *p)
+945	{
+946	    // this is expanded using the free wrapper in mm.h
+947	    free(p);
+948	}
+949	
+950	static inline void *ext_realloc(void *p, size_t s)
+951	{
+(gdb) up
+#3  0x0000000000371f4d in shell_handle_cmd (state=0x161340, buf=0xbe5fff40 "meminfo", max=80) at src/nautilus/shell.c:546
+546	        ret = cmd->impl->handler(buf, cmd->priv_data);
+(gdb) list
+541	    }
+542	
+543	    cmd = shell_rtree_lookup(state->root, cmd_buf);
+544	
+545	    if (cmd && cmd->impl && cmd->impl->handler) {
+546	        ret = cmd->impl->handler(buf, cmd->priv_data);
+547	    }
+548	            
+549	    if (ret < 0) {
+550	        nk_vc_printf("Don't understand \"%s\"\n", cmd_buf);
+(gdb) down
+#2  0x000000000035cca0 in handle_meminfo (buf=<optimized out>, priv=<optimized out>) at src/nautilus/mm/kmem.c:947
+947	    free(p);
+(gdb) list
+942	}
+943	
+944	static inline void ext_free(void *p)
+945	{
+946	    // this is expanded using the free wrapper in mm.h
+947	    free(p);
+948	}
+949	
+950	static inline void *ext_realloc(void *p, size_t s)
+951	{

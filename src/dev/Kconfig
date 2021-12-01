@@ -1,0 +1,278 @@
+menu "Devices"
+
+menu "Serial Options"
+
+config SERIAL_REDIRECT
+    bool "Serial Redirect"
+    depends on !HVM_HRT
+    default n
+    help
+        Redirect printing to serial device
+        Uses early serial output at boot and then
+        switches to ordinary serial interface afterwards
+        What specifically is printed to serial also depends
+        on how mirroring is set up (if at all) in the 
+        virtual console configuration
+
+config SERIAL_REDIRECT_PORT
+    depends on SERIAL_REDIRECT
+    int "Serial COM Port for redirection"
+    range 1 4
+    default "1"
+    help
+      Specifies which serial port to use for serial redirection. E.g. 1 is COM1.
+      This must be different from your debug port!
+
+config SERIAL_DEBUGGER
+    bool "Serial Debugger"
+    depends on ENABLE_REMOTE_DEBUGGING
+    default n
+    help
+        Provide a simple serial interface to a remote debugger
+
+config SERIAL_DEBUGGER_PORT
+    depends on SERIAL_DEBUGGER
+    int "Serial COM Port for remote debugger interface"
+    range 1 4
+    default "2"
+    help
+      Specifies which serial port to use for serial connection to 
+      a remote debugger (e.g. gdb).   1 is COM1, etc.  This must
+      be different from your redirect port!
+      
+endmenu      
+
+config APIC_FORCE_XAPIC_MODE
+    bool "Force APIC to use XAPIC mode"
+    default n
+    help
+       Force the use of XAPIC mode even if X2APIC mode is available
+
+config APIC_TIMER_CALIBRATE_INDEPENDENTLY
+    bool "Calibrate APIC timer independently on each core"
+    default n
+    help
+      If set, each core's APIC timer is independently calibrated
+      If not set, only the BSP core's timer is calibrated and
+      other cores clone its calibration
+
+
+config DEBUG_APIC
+    bool "Debug APIC"
+    depends on DEBUG_PRINTS
+    default n
+    help
+        Turn on debug prints for the LAPIC driver
+
+config DEBUG_IOAPIC
+    bool "Debug IOAPIC"
+    depends on DEBUG_PRINTS
+    default n
+    help 
+        Turn on debug prints for the IOAPIC driver
+
+config DEBUG_PCI
+    bool "Debug PCI"
+    depends on DEBUG_PRINTS
+    default n
+    help 
+        Turn on debug prints for PCI devices
+
+config DISABLE_PS2_MOUSE
+    bool "Disable PS2 Mouse"
+    default n
+    help
+        Unconditionally disable PS2 mouse support
+        This is useful on bizarro platforms that have broken or
+        disabled PS2 emulation where we can't detect it
+
+
+config DEBUG_PS2
+    bool "Debug PS2 interface (Keyboard/Mouse)"
+    depends on DEBUG_PRINTS
+    default n
+    help
+        Turn on debug prints for the keyboard/mouse on the PS/2 interface
+
+config GPIO
+    bool "GPIO support"
+    default n
+    help
+       Provide parallel port GPIO device driver
+
+config GPIO_PORT
+    hex "Port"
+    default 0xe010
+    depends on GPIO
+    help
+       Parallel port I/O port to use
+       Common: 0x378  = first legacy parallel port
+               0x278  = second legacy parallel port
+               0xd010 = port in NU test Phi (lspci to find out)
+
+config DEBUG_GPIO
+    bool "Debug GPIO interface (parallel port)"
+    depends on DEBUG_PRINTS && GPIO
+    default n
+    help
+        Turn on debug prints for the parallel port GPIO device
+
+config DEBUG_PIT
+    bool "Debug PIT"
+    depends on DEBUG_PRINTS
+    default n
+    help
+      Turn on debug prints for the i8253/8254 PIT
+
+config HPET
+    bool "HPET Support"
+    depends on X86_64_HOST
+    default n
+    help
+      Includes HPET timer support in Nautilus
+
+config DEBUG_HPET
+    bool "Debug HPET"
+    depends on DEBUG_PRINTS && HPET
+    default n
+    help
+      Turn on debug prints for the HPET
+
+config VIRTIO_PCI
+    bool "Core Virtio PCI Driver"
+    depends on X86_64_HOST
+    default n
+    help
+      Adds the basic Virtio PCI interface
+
+config DEBUG_VIRTIO_PCI
+    bool "Debug Virtio PCI"
+    depends on DEBUG_PRINTS && VIRTIO_PCI
+    default n
+    help
+      Turn on debug prints for the Virtio PCI interface
+
+config VIRTIO_NET
+    bool "Virtio Net"
+    depends on VIRTIO_PCI
+    default n
+    help
+      Adds the Virtio Network Driver
+
+config DEBUG_VIRTIO_NET
+    bool "Debug Virtio Net"
+    depends on DEBUG_PRINTS && VIRTIO_NET
+    default n
+    help
+      Turn on debug prints for the Virtio Network Driver
+      
+config VIRTIO_BLK
+    bool "Virtio Block"
+    depends on VIRTIO_PCI
+    default n
+    help
+      Adds the Virtio Block Driver
+
+config DEBUG_VIRTIO_BLK
+    bool "Debug Virtio Block"
+    depends on DEBUG_PRINTS && VIRTIO_BLK
+    default n
+    help
+      Turn on debug prints for the Virtio Block Driver
+
+config E1000_PCI
+    bool "E1000 PCI NIC Driver"
+    depends on X86_64_HOST
+    default n
+    help
+      Adds the basic E1000 PCI network interface driver
+
+config DEBUG_E1000_PCI
+    bool "Debug E1000 PCI"
+    depends on DEBUG_PRINTS && E1000_PCI
+    default n
+    help
+      Turn on debug prints for the E1000 PCI driver
+
+config E1000E_PCI
+    bool "E1000E PCI NIC Driver"
+    depends on X86_64_HOST
+    default n
+    help
+      Adds the basic E1000E PCI network interface driver
+
+config DEBUG_E1000E_PCI
+    bool "Debug E1000E PCI"
+    depends on DEBUG_PRINTS && E1000E_PCI
+    default n
+    help
+      Turn on debug prints for the E1000E PCI driver
+
+config MLX3_PCI
+    bool "Mellanox ConnectX-3 PCI Driver"
+    depends on X86_64_HOST
+    default n
+    help
+      Adds experimental driver for the Mellanox ConnectX-3 HCA Adapter
+
+config DEBUG_MLX3_PCI
+    bool "Debug Mellanox ConnectX-3"
+    depends on DEBUG_PRINTS && MLX3_PCI
+    default n
+    help
+      Turn on debug prints for the Mellanox ConnectX-3 HCA Driver
+
+
+config RAMDISK
+    bool "RAM Disk Support"
+    default n
+    help 
+       Adds the ramdisk device
+
+config RAMDISK_EMBED
+    bool "Embed nautilus/ramdisk.img and instantiate at boot"
+    depends on RAMDISK
+    default n
+    help
+      Embed the ramdisk image in the main directory
+      into the Nautilus kernel image
+
+config DEBUG_RAMDISK
+    bool "Debug RAM Disk"
+    depends on DEBUG_PRINTS && RAMDISK
+    default n
+    help
+      Turn on debug prints for the ramdisk device
+
+config ATA
+    bool "ATA Support"
+    default n
+    help 
+       Adds very primitive ATA suppor 
+       Currently legacy controller only, HDs only, 
+       and PIO only with LBA48
+
+config DEBUG_ATA
+    bool "Debug ATA Support"
+    depends on DEBUG_PRINTS && ATA
+    default n
+    help
+      Turn on debug prints for ATA devices
+
+config VESA
+    bool "VESA Support"
+    depends on REAL_MODE_INTERFACE
+    default n
+    help
+       Allow text and graphics control on VESA video cards
+
+config DEBUG_VESA
+    bool "Debug VESA"
+    depends on VESA
+    default n
+    help
+       Add debugging output from VESA driver
+
+endmenu
+
+    

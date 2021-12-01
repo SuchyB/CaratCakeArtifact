@@ -1,0 +1,6 @@
+**Details changes for CARAT CAKE**
+
+For Benchmark IS (Integer Sort), the benchmark displays a bug 
+(in both Linux and Nautilus) that requires changing a stack 
+allocation into a heap allocation. This change was made to
+./IS/is.c

@@ -1,0 +1,21 @@
+Debugging/Hacking --- 5/1
+./faulty
+- nautilus.b --- nautilus.bin from performing injections (with no 
+  injections into the main method) --- i.e. no real injections overall
+- nautilus.iso --- corresponding isoimage from nautilus.b
+
+./output
+- dag.out --- backend error when injecting AddToAllocationTable into
+  main method (with and without stack trace)
+- nautilus_original.ll --- resulting bitcode PRE injections
+- nautilus_injected.ll --- resulting bitcode with injections (no real
+  injections because injections to main method turned off)
+- correct.out --- info from readelf for binary compiled without 
+  'make carat'
+- incorrect.out --- info from readelf for binary compiled with 'make 
+  carat'
+- nautilus.nocarat --- corresponding objdump from binary that generated
+  correct.out readelf output
+- nautilus.carat --- corresponding objdump from binary that generated
+  incorrect.out readelf output
+

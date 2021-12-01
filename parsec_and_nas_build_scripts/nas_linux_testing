@@ -1,0 +1,28 @@
+#!/bin/bash -x
+
+BENCH=$1
+CLASS_NAME=$2
+KARAT_FLAGS=$3
+
+NAS=${NAUT}/src/test/NAS
+
+# NAUT=environment var is set to your top level nautilus directory
+FW=${NAUT}/user/framework
+echo ${NAUT} ;
+echo ${FW} ;
+
+
+# Set up NAS suite, build benchmark
+echo "Building benchmark ..."
+cd ${NAS} && \
+    make clean ; \
+    cd ${NAS}/${BENCH} && \
+    make clean ; \
+    make CLASS=${CLASS_NAME} KARAT=${KARAT_FLAGS} && \
+    cp ${NAS}/bin/${BENCH,,}.${CLASS_NAME} ${NAS}/../nas-linux-bins ;
+
+echo "Done!"
+
+
+
+

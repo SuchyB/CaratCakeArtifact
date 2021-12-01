@@ -1,0 +1,3 @@
+C_IN= -I ../common
+CFLAGS= -o3 $(C_IN)
+WTIME=wtime.c

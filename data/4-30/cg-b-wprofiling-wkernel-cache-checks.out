@@ -1,0 +1,353 @@
+CPU ? (): dev: devices inited
+CPU ? (): chardev: init
+CPU ? (): blkdev: init
+CPU ? (): netdev: init
+Welcome to                                         
+    _   __               __   _  __                
+   / | / /____ _ __  __ / /_ (_)/ /__  __ _____    
+  /  |/ // __ `// / / // __// // // / / // ___/    
+ / /|  // /_/ // /_/ // /_ / // // /_/ /(__  )     
+/_/ |_/ \__,_/ \__,_/ \__//_//_/ \__,_//____/  
++===============================================+  
+ Kyle C. Hale (c) 2014 | Northwestern University   
++===============================================+  
+
+Detected GenuineIntel Processor
+CPU ? (): DEBUG: Increasing kern end to 0x0664e41e
+BOOTMEM: Setting up boot memory allocator
+BOOTMEM: Memory map[0] - [0x00000000 - 0x0009f000] <usable RAM>
+BOOTMEM: Memory map[1] - [0x000a0000 - 0x000a0000] <reserved>
+BOOTMEM: Memory map[2] - [0x000f0000 - 0x00100000] <reserved>
+BOOTMEM: Memory map[3] - [0x00100000 - 0xbffe0000] <usable RAM>
+BOOTMEM: Memory map[4] - [0xbffe0000 - 0xc0000000] <reserved>
+BOOTMEM: Memory map[5] - [0xfeffc000 - 0xff000000] <reserved>
+BOOTMEM: Memory map[6] - [0xfffc0000 - 0x100000000] <reserved>
+BOOTMEM: Memory map[7] - [0x100000000 - 0x240000000] <usable RAM>
+BOOTMEM: Detected 8191.523264 MB (4609 pages) of usable System RAM
+CPU ? (): DEBUG: Multiboot info size 472B
+CPU ? (): DEBUG: Image load base: 0x100040
+CPU ? (): DEBUG: Kernel Cmd line: 
+CPU ? (): DEBUG: Boot loader: GRUB 2.04-1ubuntu26.9
+CPU ? (): DEBUG: Unhandled tag type (0xa)
+CPU ? (): DEBUG: Found module: 
+CPU ? (): DEBUG:   type:     0x00000003
+CPU ? (): DEBUG:   size:     0x00000011
+CPU ? (): DEBUG:   mod_start 0x06637000
+CPU ? (): DEBUG:   mod_end   0x0664e41e
+CPU ? (): DEBUG:   args:     
+CPU ? (): DEBUG: Found symbol table module
+CPU ? (): DEBUG: Multiboot2 memory map detected
+CPU ? (): DEBUG: ELF size=20, num=0, entsize=0, shndx=0, sechdr=0x06800000
+CPU ? (): DEBUG: Multiboot2 basic meminfo detected
+CPU ? (): DEBUG: Boot device: (biosdev=0xe0,slice=4294967295,part=4294967295)
+CPU ? (): DEBUG: fb addr: 0x000b8000, fb_width: 80, fb_height: 25
+CPU ? (): DEBUG: Old ACPI: rsdp=0x0664e5d8
+ACPI: Parsing ACPI root table (at 0x000f5a50)
+ACPI: RSDP 00000000000f5a50 00014 (v00 BOCHS )
+ACPI: RSDT 00000000bffe15c9 00030 (v01 BOCHS  BXPCRSDT 00000001 BXPC 00000001)
+ACPI: root table checksum pass
+ACPI: FACP 00000000bffe149d 00074 (v01 BOCHS  BXPCFACP 00000001 BXPC 00000001)
+ACPI: APIC 00000000bffe1511 00080 (v01 BOCHS  BXPCAPIC 00000001 BXPC 00000001)
+ACPI: HPET 00000000bffe1591 00038 (v01 BOCHS  BXPCHPET 00000001 BXPC 00000001)
+ACPI: Done parsing ACPI root table
+SMP: Detected 2 CPUs
+NUMA: Parsing ACPI NUMA information...
+NUMA: DONE.
+CPU ? (): WARNING: NUMA: Associate Domains using ADHOC METHOD
+Remapping phys mem [0x00000000 - 0x240000000] with 2MB pages
+CPU ? (): KMEM: Malloc configured to support a maximum of: 0x1fff7f000 bytes of physical memory
+BOOTMEM: Adding boot memory regions to the kernel memory pool:
+BOOTMEM:     [Domain 00 : Region 00] (0.00 MB)
+BOOTMEM:     [Domain 00 : Region 01] (3042.967552 MB)
+BOOTMEM:     [Domain 00 : Region 02] (5368.709120 MB)
+BOOTMEM:     =======
+BOOTMEM:     [TOTAL] (8411.676672 MB)
+Disabling legacy 8259 PIC
+Initializing i8254 PIT
+CPU 0 (P 0 "*none*"): dev: Added device with name i8254, type 2, flags 0x0
+CPU 0 (P 0 "*none*"): dev: Added device with name ioapic0, type 1, flags 0x0
+CPU 0 (P 0 "*none*"): waitqueue: inited
+CPU 0 (P 0 "*none*"): future: inited (seeded pool with 256 futures)
+CPU 0 (P 0 "*none*"): timer: Timers inited
+CPU 0 (P 0 "*none*"): APIC: Detected APIC 0x0 at 1000174400 Hz and cycles per us as 2598 (core at 2598000000 Hz) calibration mode=0
+CPU 0 (P 0 "*none*"): APIC: Detected APIC 0x0 CPU cycles per tick as 41 cycles (min was 41)
+CPU 0 (P 0 "*none*"): dev: Added device with name apic0, type 1, flags 0x0
+CPU 0 (P 0 "*none*"): semaphore: inited
+CPU 0 (P 0 "*none*"): msg_queue: inited
+CPU 0 (P 0 "*none*"): ps2: init
+CPU 0 (P 0 "*none*"): dev: Added device with name ps2-keyboard, type 0, flags 0x0
+PCI: Probing PCI bus...
+PCI: 0000:00:00.0 8086:1237 (rev 2)
+PCI: 0000:00:01.0 8086:7000 (rev 0)
+PCI: [0000:01.0] Multifunction Device detected
+PCI: 0000:00:01.1 8086:7010 (rev 0)
+PCI: 0000:00:01.3 8086:7113 (rev 3)
+PCI: 0000:00:02.0 1234:1111 (rev 2)
+PCI: 0000:00:03.0 8086:100e (rev 3)
+CPU 0 (P 0 "*none*"): dev: Added device with name pci0, type 3, flags 0x0
+CPU 0 (P 0 "*none*"): dev: Added device with name isa, type 3, flags 0x0
+CPU 0 (P 0 "*none*"): Scheduler: Initializing scheduler on BSP
+CPU 0 (P 1 "*unnamed*"): group_sched: Inited
+BOOTMEM: Reclaiming boot sections and data:
+BOOTMEM:     [Boot alloc. page map] (0.584 MB)
+BOOTMEM:     [Boot page tables and stack]     (0.4096 MB)
+BOOTMEM:     =======
+BOOTMEM:     [TOTAL] (2.110024 MB)
+BOOTMEM:     Boot allocation range: 0x06a00000-0x0a60db80
+CPU 0 (P 1 "*unnamed*"): KMEM:    boot range: 0x06a00000-0x0a60db80   kmem private: 0x06a0c000-0x0a60db80
+SMP: Setting up cross-core IPI event queue
+CPU 1 (P 0 "*none*"): alloc: inited
+CPU 1 (P 0 "*none*"): aspace: inited
+CPU 1 (P 0 "*none*"): dev: Added device with name apic1, type 1, flags 0x0
+MWAIT not supported
+CPU 0 (P 1 "*unnamed*"): dev: Added device with name vga, type 0, flags 0x0
+CPU 0 (P 1 "*unnamed*"): dev: Added device with name serial-boot, type 0, flags 0x0
+CPU 0 (P 1 "*unnamed*"): chardev: register device serial0
+CPU 0 (P 1 "*unnamed*"): dev: Added device with name serial0, type 4, flags 0x0
+CPU 0 (P 1 "*unnamed*"): chardev: register device serial1
+CPU 0 (P 1 "*unnamed*"): dev: Added device with name serial1, type 4, flags 0x0
+CPU 0 (P 1 "*unnamed*"): vc: init
+CPU 0 (P 1 "*unnamed*"): vc: List launched
+CPU 0 (P 1 "*unnamed*"): ramdisk: init
+CPU 0 (P 1 "*unnamed*"): blkdev: register device ramdisk0
+CPU 0 (P 1 "*unnamed*"): dev: Added device with name ramdisk0, type 5, flags 0x0
+CPU 0 (P 1 "*unnamed*"): ramdisk: Added embedded image as ramdisk0, blocksize=512, numblocks=200000, len=102400000
+CPU 0 (P 1 "*unnamed*"): ata: init
+CPU 0 (P 1 "*unnamed*"): fs: inited
+CPU 0 (P 1 "*unnamed*"): fs: Added filesystem with name rootfs and flags 0x1
+CPU 0 (P 1 "*unnamed*"): fat32: filesystem rootfs on device ramdisk0 is attached (readonly)
+PMC: Initializing PMC subsystem
+CPU 0 (P 1 "*unnamed*"): WARNING : PMC: Insufficient Intel PMC version to support perf counter subsystem
+CPU 0 (P 1 "*unnamed*"): WARNING : PMC: Disabling PMC subsystem
+List of VCs (space to regenerate, plus for new shell)
+
+a : default
+b : system-log
+c : vc-list
+parsing cmdline 
+CPU 0 (P 1 "*unnamed*"): Shell root-shell launched on cpu 0 as 00000000001b8000
+Nautilus boot thread yielding (indefinitely)
+root-shell> exec /cg.exe
+CPU 0 (P 4 "root-shell"): process: Created address space
+CPU 0 (P 4 "root-shell"): process: stack address (highest stack addr): 00000000bf600000
+CPU 0 (P 4 "root-shell"): process: Entering count_and_len for loop.
+CPU 0 (P 4 "root-shell"): process: Found len of arg /CG.EXE, total len is 8. Arg count is 0.
+CPU 0 (P 4 "root-shell"): process: argc: 1, envc: 0
+CPU 0 (P 4 "root-shell"): process: Entering count_and_len for loop.
+CPU 0 (P 4 "root-shell"): process: Found len of arg OMP_NUM_THREADS=2, total len is 18. Arg count is 0.
+CPU 0 (P 4 "root-shell"): process: Found len of arg OMP_DISPLAY_ENV="TRUE", total len is 41. Arg count is 1.
+CPU 0 (P 4 "root-shell"): process: Made room on stack for 9 characters.
+CPU 0 (P 4 "root-shell"): process: Stack addr is now 00000000bf5ffff7
+CPU 0 (P 4 "root-shell"): process: Aligned stack to 8 bytes. Stack addr is now 00000000bf5ffff0
+CPU 0 (P 4 "root-shell"): process: Made room on stack for 2 pointers.
+CPU 0 (P 4 "root-shell"): process: Stack addr is now 00000000bf5fffe0
+CPU 0 (P 4 "root-shell"): process: Aligned stack to 8 bytes. Stack addr is now 00000000bf5fffe0
+CPU 0 (P 4 "root-shell"): process: copying /CG.EXE to the stack at addr 00000000bf5ffff7
+CPU 0 (P 4 "root-shell"): process: arg pointer array after adding args: 00000000bf5ffff7
+CPU 0 (P 4 "root-shell"): process: Made room on stack for 42 characters.
+CPU 0 (P 4 "root-shell"): process: Stack addr is now 00000000bf5fffb6
+CPU 0 (P 4 "root-shell"): process: Aligned stack to 8 bytes. Stack addr is now 00000000bf5fffb0
+CPU 0 (P 4 "root-shell"): process: Made room on stack for 3 pointers.
+CPU 0 (P 4 "root-shell"): process: Stack addr is now 00000000bf5fff98
+CPU 0 (P 4 "root-shell"): process: Aligned stack to 8 bytes. Stack addr is now 00000000bf5fff98
+CPU 0 (P 4 "root-shell"): process: copying OMP_NUM_THREADS=2 to the stack at addr 00000000bf5fffb6
+CPU 0 (P 4 "root-shell"): process: copying OMP_DISPLAY_ENV="TRUE" to the stack at addr 00000000bf5fffc9
+CPU 0 (P 4 "root-shell"): process: arg pointer array after adding args: 00000000bf5fffb6
+Started /CG.EXE in the background.
+CPU 0 (P 5 "*unnamed*"): process: Entering process wrapper.
+CPU 0 (P 5 "*unnamed*"): process: After thread group
+CPU 0 (P 5 "*unnamed*"): process: Moving thread into process aspace. Aspace addr: 00000000bf4c7080, Process addr 00000000bf4c0800
+CPU 0 (P 5 "*unnamed*"): process: Sucessfully swapped to process aspace
+CPU 0 (P 5 "*unnamed*"): process: Starting executable at addr 00000000bf4c7cc0 with 1 args
+CPU 0 (P 5 "*unnamed*"): DEBUG: syscall: Inside syscall handler for syscall 107
+CPU 0 (P 5 "*unnamed*"): DEBUG: sys_stubs: Call to stubbed syscall (geteuid)
+CPU 0 (P 5 "*unnamed*"): DEBUG: syscall: Syscall returned -1
+CPU 0 (P 5 "*unnamed*"): DEBUG: syscall: Inside syscall handler for syscall 102
+CPU 0 (P 5 "*unnamed*"): DEBUG: sys_stubs: Call to stubbed syscall (getuid)
+CPU 0 (P 5 "*unnamed*"): DEBUG: syscall: Syscall returned -1
+CPU 0 (P 5 "*unnamed*"): DEBUG: syscall: Inside syscall handler for syscall 108
+CPU 0 (P 5 "*unnamed*"): DEBUG: sys_stubs: Call to stubbed syscall (getegid)
+CPU 0 (P 5 "*unnamed*"): DEBUG: syscall: Syscall returned -1
+CPU 0 (P 5 "*unnamed*"): DEBUG: syscall: Inside syscall handler for syscall 104
+CPU 0 (P 5 "*unnamed*"): DEBUG: sys_stubs: Call to stubbed syscall (getgid)
+CPU 0 (P 5 "*unnamed*"): DEBUG: syscall: Syscall returned -1
+CPU 0 (P 5 "*unnamed*"): DEBUG: syscall: Inside syscall handler for syscall 158
+CPU 0 (P 5 "*unnamed*"): DEBUG: sys_arch_prctl: Task: 3001
+ Option: 401ffe70
+ Addrlen 000000008025bf50
+CPU 0 (P 5 "*unnamed*"): DEBUG: sys_arch_prctl: Unimplemented option
+CPU 0 (P 5 "*unnamed*"): DEBUG: syscall: Syscall returned -1
+CPU 0 (P 5 "*unnamed*"): DEBUG: syscall: Inside syscall handler for syscall 12
+CPU 0 (P 5 "*unnamed*"): DEBUG: sys_brk: Called with brk=(null)
+CPU 0 (P 5 "*unnamed*"): DEBUG: sys_brk: Going to return 00000000bc200000
+CPU 0 (P 5 "*unnamed*"): DEBUG: syscall: Syscall returned 3156213760
+CPU 0 (P 5 "*unnamed*"): DEBUG: syscall: Inside syscall handler for syscall 12
+CPU 0 (P 5 "*unnamed*"): DEBUG: sys_brk: Called with brk=00000000bc202900
+CPU 0 (P 5 "*unnamed*"): DEBUG: sys_brk: Going to return 00000000bc202900
+CPU 0 (P 5 "*unnamed*"): DEBUG: syscall: Syscall returned 3156224256
+CPU 0 (P 5 "*unnamed*"): DEBUG: syscall: Inside syscall handler for syscall 158
+CPU 0 (P 5 "*unnamed*"): DEBUG: sys_arch_prctl: Task: 1002
+ Option: bc201000
+ Addrlen 0000000000000020
+CPU 0 (P 5 "*unnamed*"): DEBUG: syscall: Syscall returned 0
+CPU 0 (P 5 "*unnamed*"): DEBUG: syscall: Inside syscall handler for syscall 63
+CPU 0 (P 5 "*unnamed*"): DEBUG: syscall: Syscall returned 0
+CPU 0 (P 5 "*unnamed*"): DEBUG: syscall: Inside syscall handler for syscall 89
+CPU 0 (P 5 "*unnamed*"): DEBUG: sys_stubs: Call to stubbed syscall (readlink)
+CPU 0 (P 5 "*unnamed*"): DEBUG: sys_stubs: /proc/self/exe
+00000000401fed30
+4096
+CPU 0 (P 5 "*unnamed*"): DEBUG: syscall: Syscall returned 5
+CPU 0 (P 5 "*unnamed*"): DEBUG: syscall: Inside syscall handler for syscall 12
+CPU 0 (P 5 "*unnamed*"): DEBUG: sys_brk: Called with brk=00000000bc223900
+CPU 0 (P 5 "*unnamed*"): DEBUG: sys_brk: Going to return 00000000bc223900
+CPU 0 (P 5 "*unnamed*"): DEBUG: syscall: Syscall returned 3156359424
+CPU 0 (P 5 "*unnamed*"): DEBUG: syscall: Inside syscall handler for syscall 12
+CPU 0 (P 5 "*unnamed*"): DEBUG: sys_brk: Called with brk=00000000bc224000
+CPU 0 (P 5 "*unnamed*"): DEBUG: sys_brk: Going to return 00000000bc224000
+CPU 0 (P 5 "*unnamed*"): DEBUG: syscall: Syscall returned 3156361216
+root-shell> CPU 0 (P 5 "*unnamed*"): DEBUG: syscall: Inside syscall handler for syscall 5
+CPU 0 (P 5 "*unnamed*"): DEBUG: sys_fstat: Called with 1, 00000000401ffb80
+CPU 0 (P 5 "*unnamed*"): WARNING : sys_fstat: Returning mocked fstat data for stdio
+CPU 0 (P 5 "*unnamed*"): DEBUG: syscall: Syscall returned 0
+CPU 0 (P 5 "*unnamed*"): DEBUG: syscall: Inside syscall handler for syscall 96
+CPU 0 (P 5 "*unnamed*"): DEBUG: sys_timeofday: Setting user time of day struct time to 42 sec, 696219 usec
+CPU 0 (P 5 "*unnamed*"): DEBUG: syscall: Syscall returned 0
+CPU 0 (P 5 "*unnamed*"): DEBUG: syscall: Inside syscall handler for syscall 1
+
+
+ NAS Parallel Benchmarks 3.0 structured OpenMP C version - CG Benchmark
+ Size:      75000
+ Iterations:    75
+   iteration           ||r||                 zeta
+        1       3.03548598614517e-13 5.9999475157875e+01
+        2       1.11864354882675e-15 2.1762784614254e+01
+        3       1.13122585119279e-15 2.2287661704322e+01
+        4       1.12221605852839e-15 2.2523073818835e+01
+        5       1.12442341772191e-15 2.2627539065389e+01
+        6       1.13304348193841e-15 2.2674025918953e+01
+        7       1.13342596230503e-15 2.2694905682625e+01
+        8       1.13748393136469e-15 2.2704402316687e+01
+        9       1.14248774430387e-15 2.2708783434562e+01
+       10       1.13294751905663e-15 2.2710835139718e+01
+       11       1.13373640934822e-15 2.2711810712134e+01
+       12       1.13799283088636e-15 2.2712281624097e+01
+       13       1.13694536817940e-15 2.2712512266324e+01
+       14       1.14303903370149e-15 2.2712626800759e+01
+       15       1.14003188863999e-15 2.2712684416182e+01
+       1CPU 0 (P 5 "*unnamed*"): DEBUG: syscall: Syscall returned 1024
+CPU 0 (P 5 "*unnamed*"): DEBUG: syscall: Inside syscall handler for syscall 1
+6       1.13520913311971e-15 2.2712713746175e+01
+       17       1.13509234391242e-15 2.2712728840200e+01
+       18       1.14753788645647e-15 2.2712736684830e+01
+       19       1.13667779290275e-15 2.2712740798122e+01
+       20       1.12742433125044e-15 2.2712742972136e+01
+       21       1.13539307928559e-15 2.2712744129403e+01
+       22       1.12996858002779e-15 2.2712744749390e+01
+       23       1.12964050411701e-15 2.2712745083453e+01
+       24       1.13819755978870e-15 2.2712745264388e+01
+       25       1.13281273016627e-15 2.2712745362845e+01
+       26       1.13673326589385e-15 2.2712745416652e+01
+       27       1.12833721786049e-15 2.2712745446170e+01
+       28       1.13847341588629e-15 2.2712745462421e+01
+       29       1.13940119897194e-15 2.2712745471397e+01
+       30       1.13542940676399e-15 2.2712745476370e+01
+       31       1.14129880291034e-15 2.2712745479134e+01
+       32       1.13580884077166e-15 2.2712745480674e+01
+       33       1.12632661525154e-15 2.2712745481532e+01
+      CPU 0 (P 5 "*unnamed*"): DEBUG: syscall: Syscall returned 1024
+CPU 0 (P 5 "*unnamed*"): DEBUG: syscall: Inside syscall handler for syscall 1
+ 34       1.12751830802856e-15 2.2712745482013e+01
+       35       1.13283069514087e-15 2.2712745482284e+01
+       36       1.13578803148906e-15 2.2712745482435e+01
+       37       1.13326877904882e-15 2.2712745482520e+01
+       38       1.13241088181371e-15 2.2712745482568e+01
+       39       1.13650655237769e-15 2.2712745482597e+01
+       40       1.13611853613215e-15 2.2712745482612e+01
+       41       1.12765198207156e-15 2.2712745482620e+01
+       42       1.13171834248783e-15 2.2712745482625e+01
+       43       1.12360074817697e-15 2.2712745482628e+01
+       44       1.13040655646838e-15 2.2712745482630e+01
+       45       1.12877913564305e-15 2.2712745482631e+01
+       46       1.12970280001327e-15 2.2712745482631e+01
+       47       1.12812368696656e-15 2.2712745482631e+01
+       48       1.12772540755482e-15 2.2712745482632e+01
+       49       1.13203272898469e-15 2.2712745482631e+01
+       50       1.12876552855629e-15 2.2712745482632e+01
+       51       1.12305034223996e-15 2.2712745482632e+01
+    CPU 0 (P 5 "*unnamed*"): DEBUG: syscall: Syscall returned 1024
+CPU 0 (P 5 "*unnamed*"): DEBUG: syscall: Inside syscall handler for syscall 1
+   52       1.12920890949443e-15 2.2712745482631e+01
+       53       1.13667283964080e-15 2.2712745482631e+01
+       54       1.12226184669682e-15 2.2712745482631e+01
+       55       1.12781932765157e-15 2.2712745482631e+01
+       56       1.12446248960298e-15 2.2712745482632e+01
+       57       1.12645088726848e-15 2.2712745482632e+01
+       58       1.12555837747598e-15 2.2712745482631e+01
+       59       1.12271291467232e-15 2.2712745482631e+01
+       60       1.11894808001733e-15 2.2712745482632e+01
+       61       1.11632414726784e-15 2.2712745482631e+01
+       62       1.12788394242185e-15 2.2712745482632e+01
+       63       1.12268041330082e-15 2.2712745482631e+01
+       64       1.12224566013613e-15 2.2712745482632e+01
+       65       1.12708795243098e-15 2.2712745482631e+01
+       66       1.13037713900055e-15 2.2712745482632e+01
+       67       1.12401013572871e-15 2.2712745482632e+01
+       68       1.12402788843906e-15 2.2712745482632e+01
+       69       1.12077480677183e-15 2.2712745482632e+01
+  CPU 0 (P 5 "*unnamed*"): DEBUG: syscall: Syscall returned 1024
+CPU 0 (P 5 "*unnamed*"): DEBUG: syscall: Inside syscall handler for syscall 96
+CPU 0 (P 5 "*unnamed*"): DEBUG: sys_timeofday: Setting user time of day struct time to 161 sec, 931640 usec
+CPU 0 (P 5 "*unnamed*"): DEBUG: syscall: Syscall returned 0
+CPU 0 (P 5 "*unnamed*"): DEBUG: syscall: Inside syscall handler for syscall 1
+     70       1.11787551875706e-15 2.2712745482633e+01
+       71       1.11959352456491e-15 2.2712745482631e+01
+       72       1.12607151263365e-15 2.2712745482632e+01
+       73       1.12816779649967e-15 2.2712745482632e+01
+       74       1.11623400348146e-15 2.2712745482632e+01
+       75       1.12087092039207e-15 2.2712745482631e+01
+ Benchmark completed
+ VERIFICATION SUCCESSFUL
+ Zeta is      2.271274548263e+01
+ Error is     7.105427357601e-15
+
+
+ CG Benchmark Completed
+ Class           =                        B
+ Size            =                    75000
+ Iterations      =                       75
+ Threads         =                        1
+ Time in seconds =                   119.24
+ Mop/s total     =                   458.83
+ Operation type  =           floating point
+ Verification    =               SUCCESSFUL
+ Version         =           3.0 structured
+ Compile date    =              30 Apr 2021
+
+ Compile options:
+    CC           = gclang
+    CLINK        = $(NAUT)/user/framework/nld-noelle-ubuntu $CPU 0 (P 5 "*unnamed*"): DEBUG: syscall: Syscall returned 1024
+CPU 0 (P 5 "*unnamed*"): DEBUG: syscall: Inside syscall handler for syscall 1
+(...
+    C_LIB        = (none)
+    C_INC        = -I../common
+    CFLAGS       = -O1 -Xclang -disable-llvm-passes -lm -mcmod...
+    CLINKFLAGS   = (none)
+    RAND         = randdp
+CPU 0 (P 5 "*unnamed*"): DEBUG: syscall: Syscall returned 180
+CPU 0 (P 5 "*unnamed*"): DEBUG: syscall: Inside syscall handler for syscall 231
+CPU 0 (P 5 "*unnamed*"): DEBUG: sys_stubs: Call to stubbed syscall (exit_group)
+CPU 0 (P 5 "*unnamed*"): DEBUG: syscall: Syscall returned -1
+CPU 0 (P 5 "*unnamed*"): DEBUG: syscall: Inside syscall handler for syscall 60
+protection_profile
+---handle_protections_profile---
+guard_address_calls: 34803335
+guard_stack_calls: 150102
+average request_permission_time: 66
+average cur_thread_time: 53
+average region_find_time: 0
+average lock_time: 0
+average process_permissions_time: 0
+average cache_check_time: 22
+example empty rdtsc interval: 24
+root-shell> 

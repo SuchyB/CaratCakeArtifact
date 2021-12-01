@@ -1,0 +1,2 @@
+cp carat-build/carat-paging-config .config
+./scripts/pass_build.sh carat/nautilus-port KARAT.cpp ; make clean ; make -j; make bitcode ; make karat ; make final ; make isoimage

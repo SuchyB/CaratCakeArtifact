@@ -1,0 +1,132 @@
+CPU ? (): dev: devices inited
+CPU ? (): chardev: init
+CPU ? (): blkdev: init
+CPU ? (): netdev: init
+Welcome to                                         
+    _   __               __   _  __                
+   / | / /____ _ __  __ / /_ (_)/ /__  __ _____    
+  /  |/ // __ `// / / // __// // // / / // ___/    
+ / /|  // /_/ // /_/ // /_ / // // /_/ /(__  )     
+/_/ |_/ \__,_/ \__,_/ \__//_//_/ \__,_//____/  
++===============================================+  
+ Kyle C. Hale (c) 2014 | Northwestern University   
++===============================================+  
+
+Detected AuthenticAMD Processor
+CPU ? (): DEBUG: Increasing kern end to 0x0042a6d7
+BOOTMEM: Setting up boot memory allocator
+BOOTMEM: Memory map[0] - [0x00000000 - 0x0009f000] <usable RAM>
+BOOTMEM: Memory map[1] - [0x000a0000 - 0x000a0000] <reserved>
+BOOTMEM: Memory map[2] - [0x000f0000 - 0x00100000] <reserved>
+BOOTMEM: Memory map[3] - [0x00100000 - 0xbffdf000] <usable RAM>
+BOOTMEM: Memory map[4] - [0xbffdf000 - 0xc0000000] <reserved>
+BOOTMEM: Memory map[5] - [0xfffc0000 - 0x100000000] <reserved>
+BOOTMEM: Memory map[6] - [0x100000000 - 0x1040000000] <usable RAM>
+BOOTMEM: Detected 65535.519168 MB (33281 pages) of usable System RAM
+CPU ? (): DEBUG: Multiboot info size 440B
+CPU ? (): DEBUG: Image load base: 0x100040
+CPU ? (): DEBUG: Kernel Cmd line: 
+CPU ? (): DEBUG: Boot loader: GRUB 2.04
+CPU ? (): DEBUG: Unhandled tag type (0xa)
+CPU ? (): DEBUG: Found module: 
+CPU ? (): DEBUG:   type:     0x00000003
+CPU ? (): DEBUG:   size:     0x00000011
+CPU ? (): DEBUG:   mod_start 0x0041c000
+CPU ? (): DEBUG:   mod_end   0x0042a6d7
+CPU ? (): DEBUG:   args:     
+CPU ? (): DEBUG: Found symbol table module
+CPU ? (): DEBUG: Multiboot2 memory map detected
+CPU ? (): DEBUG: ELF size=20, num=0, entsize=0, shndx=0, sechdr=0x003f6760
+CPU ? (): DEBUG: Multiboot2 basic meminfo detected
+CPU ? (): DEBUG: Boot device: (biosdev=0xe0,slice=4294967295,part=4294967295)
+CPU ? (): DEBUG: fb addr: 0x000b8000, fb_width: 80, fb_height: 25
+CPU ? (): DEBUG: Old ACPI: rsdp=0x0041b978
+ACPI: Parsing ACPI root table (at 0x000f5aa0)
+ACPI: RSDP 00000000000f5aa0 00014 (v00 BOCHS )
+ACPI: RSDT 00000000bffe1309 00030 (v01 BOCHS  BXPCRSDT 00000001 BXPC 00000001)
+ACPI: root table checksum pass
+ACPI: FACP 00000000bffe11dd 00074 (v01 BOCHS  BXPCFACP 00000001 BXPC 00000001)
+ACPI: APIC 00000000bffe1251 00080 (v01 BOCHS  BXPCAPIC 00000001 BXPC 00000001)
+ACPI: HPET 00000000bffe12d1 00038 (v01 BOCHS  BXPCHPET 00000001 BXPC 00000001)
+ACPI: Done parsing ACPI root table
+SMP: Detected 2 CPUs
+NUMA: Parsing ACPI NUMA information...
+NUMA: DONE.
+CPU ? (): WARNING: NUMA: Associate Domains using ADHOC METHOD
+Remapping phys mem [0x00000000 - 0x1040000000] with 2MB pages
+CPU ? (): KMEM: Malloc configured to support a maximum of: 0xffff7e000 bytes of physical memory
+BOOTMEM: Adding boot memory regions to the kernel memory pool:
+BOOTMEM:     [Domain 00 : Region 00] (0.00 MB)
+BOOTMEM:     [Domain 00 : Region 01] (2822.766592 MB)
+BOOTMEM:     [Domain 00 : Region 02] (65498.251264 MB)
+BOOTMEM:     =======
+BOOTMEM:     [TOTAL] (68321.17856 MB)
+Disabling legacy 8259 PIC
+Initializing i8254 PIT
+CPU 0 (P 0 "*none*"): dev: Added device with name i8254, type 2, flags 0x0
+CPU 0 (P 0 "*none*"): dev: Added device with name ioapic0, type 1, flags 0x0
+CPU 0 (P 0 "*none*"): waitqueue: inited
+CPU 0 (P 0 "*none*"): future: inited (seeded pool with 256 futures)
+CPU 0 (P 0 "*none*"): timer: Timers inited
+CPU 0 (P 0 "*none*"): APIC: Detected APIC 0x0 at 1000348800 Hz and cycles per us as 2294 (core at 2294000000 Hz) calibration mode=0
+CPU 0 (P 0 "*none*"): APIC: Detected APIC 0x0 CPU cycles per tick as 36 cycles (min was 36)
+CPU 0 (P 0 "*none*"): dev: Added device with name apic0, type 1, flags 0x0
+CPU 0 (P 0 "*none*"): semaphore: inited
+CPU 0 (P 0 "*none*"): msg_queue: inited
+CPU 0 (P 0 "*none*"): ps2: init
+CPU 0 (P 0 "*none*"): dev: Added device with name ps2-keyboard, type 0, flags 0x0
+CPU 0 (P 0 "*none*"): dev: Added device with name ps2-mouse, type 0, flags 0x0
+PCI: Probing PCI bus...
+PCI: 0000:00:00.0 8086:1237 (rev 2)
+PCI: 0000:00:01.0 8086:7000 (rev 0)
+PCI: [0000:01.0] Multifunction Device detected
+PCI: 0000:00:01.1 8086:7010 (rev 0)
+PCI: 0000:00:01.3 8086:7113 (rev 3)
+PCI: 0000:00:02.0 1234:1111 (rev 2)
+PCI: 0000:00:03.0 8086:100e (rev 3)
+CPU 0 (P 0 "*none*"): dev: Added device with name pci0, type 3, flags 0x0
+CPU 0 (P 0 "*none*"): dev: Added device with name isa, type 3, flags 0x0
+CPU 0 (P 0 "*none*"): Scheduler: Initializing scheduler on BSP
+CPU 0 (P 1 "*unnamed*"): group_sched: Inited
+BOOTMEM: Reclaiming boot sections and data:
+BOOTMEM:     [Boot alloc. page map] (0.4168 MB)
+BOOTMEM:     [Boot page tables and stack]     (0.4096 MB)
+BOOTMEM:     =======
+BOOTMEM:     [TOTAL] (2.113608 MB)
+BOOTMEM:     Boot allocation range: 0x00800000-0x17847a00
+CPU 0 (P 1 "*unnamed*"): KMEM:    boot range: 0x00800000-0x17847a00   kmem private: 0x00846000-0x17847a00
+SMP: Setting up cross-core IPI event queue
+CPU 1 (P 0 "*none*"): mtrr: 82 MTRR mismatches detected with corrections attempted (1 default, 80 fixed, 0 smrr, 1 variable)
+CPU 1 (P 0 "*none*"): aspace: inited
+CPU 1 (P 0 "*none*"): dev: Added device with name apic1, type 1, flags 0x0
+MWAIT not supported
+CPU 0 (P 1 "*unnamed*"): dev: Added device with name vga, type 0, flags 0x0
+CPU 0 (P 1 "*unnamed*"): dev: Added device with name serial-boot, type 0, flags 0x0
+CPU 0 (P 1 "*unnamed*"): chardev: register device serial0
+CPU 0 (P 1 "*unnamed*"): dev: Added device with name serial0, type 4, flags 0x0
+CPU 0 (P 1 "*unnamed*"): chardev: register device serial1
+CPU 0 (P 1 "*unnamed*"): dev: Added device with name serial1, type 4, flags 0x0
+CPU 0 (P 1 "*unnamed*"): vc: init
+List of VCs (space to regenerate, plus for new shell)
+
+a : default
+b : system-log
+c : vc-list
+CPU 0 (P 1 "*unnamed*"): vc: List launched
+CPU 0 (P 1 "*unnamed*"): fs: inited
+PMC: Initializing PMC subsystem
+CPU 0 (P 1 "*unnamed*"): WARNING : PMC: Insufficient AMD PMC support for perf counter subsystem
+CPU 0 (P 1 "*unnamed*"): WARNING : PMC: Disabling PMC subsystem
+parsing cmdline 
+CPU 0 (P 1 "*unnamed*"): Shell root-shell launched on cpu 0 as 0000000000162000
+Nautilus boot thread yielding (indefinitely)
+root-shell> meminfo
+pool 0 (null)-0000000000100000 0 blks free 0 bytes free
+  32 bytes min 0 bytes max
+pool 1 0000000000100000-0000000100100000 20 blks free 2800438048 bytes free
+  32 bytes min 1073741824 bytes max
+pool 2 0000000100000000-0000001100000000 5 blks free 65498251264 bytes free
+  32 bytes min 34359738368 bytes max
+3 pools 25 blks free 68298689312 bytes free
+  32 bytes min 34359738368 bytes max
+PANIC at src/aspace/carat/runtime_tables.c(305): nk_carat_instrument_free: REMOVE_ENTRY failed on address 0x001cb400

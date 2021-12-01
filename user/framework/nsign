@@ -1,0 +1,14 @@
+#!/bin/bash
+
+SIGN_SYMBOL_BEGIN="__naut_sign_begin"
+SIGN_SYMBOL_END="__naut_sign_end"
+NAUT_SECURE_SECTION=".naut_secure"
+
+SIGN_OFFSET_BEGIN=$((16#`objdump -t $1 | grep $SIGN_SYMBOL_BEGIN | awk '{print $1}'`))
+SIGN_OFFSET_END=$((16#`objdump -t $1 | grep $SIGN_SYMBOL_END | awk '{print $1}'`))
+NAUT_SECURE_OFFSET=$((16#`objdump -t $1 | grep $NAUT_SECURE_SECTION | head -n 1 | awk '{print $1}'`))
+
+echo $NAUT_SECURE_OFFSET
+
+cp $1 $2
+dd if=$1 bs=1 count=$((SIGN_OFFSET_END-SIGN_OFFSET_BEGIN)) skip=$SIGN_OFFSET_BEGIN | openssl md5 -binary | dd conv=notrunc of=$2 bs=1 seek=$NAUT_SECURE_OFFSET

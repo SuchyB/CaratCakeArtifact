@@ -1,0 +1,15 @@
+**Details changes made for CARAT CAKE**
+
+Mutliple benchmarks had input parameters and output files hard coded
+to support CARAT CAKE's file system (which is experimental). 
+
+The changes are to the following files (given this base directory):
+./pkgs/apps/blackscholes/src/blackscholes.c    
+./pkgs/apps/blackscholes/src/blackscholes.c   
+./pkgs/apps/fluidanimate/src/serial.cpp 
+./pkgs/apps/fluidanimate/src/serial.cpp
+./pkgs/apps/freqmine/src/fpmax.cpp
+./pkgs/apps/freqmine/src/fpmax.cpp
+./pkgs/apps/swaptions/src/HJM_Securities.cpp
+./pkgs/kernels/canneal/src/main.cpp
+./pkgs/kernels/streamcluster/src/streamcluster.cpp  

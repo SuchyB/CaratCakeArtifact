@@ -1,0 +1,40 @@
+language: c
+
+dist: xenial
+
+addons:
+    coverity_scan:
+        # GitHub project metadata
+        # ** specific to your project **
+        project:
+            name: HExSA-Lab/nautilus
+            version: 1.0
+            description: Nautilus
+
+        # Where email notification of build analysis results will be sent
+        notification_email: khale@cs.iit.edu
+
+        # Commands to prepare for build_command
+        # ** likely specific to your build **
+        build_command_prepend: make defconfig
+
+        # The command that will be added as an argument to "cov-build" to compile your project for analysis,
+        # ** likely specific to your build **
+        build_command: make
+
+        # Pattern to match selecting branches that will run analysis. We recommend leaving this set to 'coverity_scan'.
+        # Take care in resource usage, and consider the build frequency allowances per
+        #   https://scan.coverity.com/faq#frequency
+        branch_pattern: master
+        
+    apt:
+        update: true
+        packages:
+            - grub2
+            - qemu
+            - xorriso
+            
+
+before_install: pip install pyyaml --user
+
+script: scripts/run_tests.py

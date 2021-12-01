@@ -1,0 +1,45 @@
+New bug --- combine redundant instructions --- on CatPass.cpp
+from commit 0dacc5a8726fbf3ad8642f8ef9e0a9da1eb3b5b1
+
+AddAllocationCallToMain turned ON
+
+----
+
+llvm-dis nautilus_opt.bc -o nautilus_opt.ll
+# Recompile (with full opt levels) new object files, binaries
+clang -fno-omit-frame-pointer -ffreestanding -fno-stack-protector -fno-strict-aliasing -fno-strict-overflow -mno-red-zone -mcmodel=large -O2   -Wall -Wno-unused-function -Wno-unused-variable -fno-common -Wstrict-overflow=5  -fgnu89-inline -m64  -Wno-pointer-sign -c nautilus_opt.bc -o .nautilus.o
+Stack dump:
+0.	Program arguments: /project/llvm/9.0.0/release/bin/clang-9 -cc1 -triple x86_64-unknown-linux-gnu -emit-obj -disable-free -disable-llvm-verifier -discard-value-names -main-file-name nautilus_opt.bc -mrelocation-model static -mthread-model posix -mdisable-fp-elim -relaxed-aliasing -fmath-errno -masm-verbose -mconstructor-aliases -ffreestanding -fuse-init-array -mcode-model large -target-cpu x86-64 -disable-red-zone -dwarf-column-info -debugger-tuning=gdb -momit-leaf-frame-pointer -coverage-notes-file /home/sgi9754/nautilus/.nautilus.gcno -resource-dir /project/llvm/9.0.0/release/lib/clang/9.0.0 -O2 -Wall -Wno-unused-function -Wno-unused-variable -Wstrict-overflow=5 -Wno-pointer-sign -fdebug-compilation-dir /home/sgi9754/nautilus -ferror-limit 19 -fmessage-length 0 -fwrapv -fgnu89-inline -fobjc-runtime=gcc -fno-common -fdiagnostics-show-option -fcolor-diagnostics -vectorize-loops -vectorize-slp -faddrsig -o .nautilus.o -x ir nautilus_opt.bc 
+1.	Per-module optimization passes
+2.	Running pass 'Function Pass Manager' on module 'nautilus_opt.bc'.
+3.	Running pass 'Combine redundant instructions' on function '@main'
+ #0 0x00000000015545cf llvm::sys::PrintStackTrace(llvm::raw_ostream&) (/project/llvm/9.0.0/release/bin/clang-9+0x15545cf)
+ #1 0x0000000001552bf0 llvm::sys::RunSignalHandlers() (/project/llvm/9.0.0/release/bin/clang-9+0x1552bf0)
+ #2 0x0000000001554b11 SignalHandler(int) (/project/llvm/9.0.0/release/bin/clang-9+0x1554b11)
+ #3 0x00007f26f2ccc630 __restore_rt (/lib64/libpthread.so.0+0xf630)
+ #4 0x0000000000dae999 (anonymous namespace)::FoldBitCast(llvm::Constant*, llvm::Type*, llvm::DataLayout const&) (/project/llvm/9.0.0/release/bin/clang-9+0xdae999)
+ #5 0x0000000000dacaa9 (anonymous namespace)::ConstantFoldConstantImpl(llvm::Constant const*, llvm::DataLayout const&, llvm::TargetLibraryInfo const*, llvm::SmallDenseMap<llvm::Constant*, llvm::Constant*, 4u, llvm::DenseMapInfo<llvm::Constant*>, llvm::detail::DenseMapPair<llvm::Constant*, llvm::Constant*> >&) (/project/llvm/9.0.0/release/bin/clang-9+0xdacaa9)
+ #6 0x0000000000dace1c llvm::ConstantFoldConstant(llvm::Constant const*, llvm::DataLayout const&, llvm::TargetLibraryInfo const*) (/project/llvm/9.0.0/release/bin/clang-9+0xdace1c)
+ #7 0x0000000001206848 combineInstructionsOverFunction(llvm::Function&, llvm::InstCombineWorklist&, llvm::AAResults*, llvm::AssumptionCache&, llvm::TargetLibraryInfo&, llvm::DominatorTree&, llvm::OptimizationRemarkEmitter&, llvm::BlockFrequencyInfo*, llvm::ProfileSummaryInfo*, bool, llvm::LoopInfo*) (/project/llvm/9.0.0/release/bin/clang-9+0x1206848)
+ #8 0x00000000012073c7 llvm::InstructionCombiningPass::runOnFunction(llvm::Function&) (/project/llvm/9.0.0/release/bin/clang-9+0x12073c7)
+ #9 0x000000000113dbc6 llvm::FPPassManager::runOnFunction(llvm::Function&) (/project/llvm/9.0.0/release/bin/clang-9+0x113dbc6)
+#10 0x000000000113de73 llvm::FPPassManager::runOnModule(llvm::Module&) (/project/llvm/9.0.0/release/bin/clang-9+0x113de73)
+#11 0x000000000113e31a llvm::legacy::PassManagerImpl::run(llvm::Module&) (/project/llvm/9.0.0/release/bin/clang-9+0x113e31a)
+#12 0x00000000016c03b7 clang::EmitBackendOutput(clang::DiagnosticsEngine&, clang::HeaderSearchOptions const&, clang::CodeGenOptions const&, clang::TargetOptions const&, clang::LangOptions const&, llvm::DataLayout const&, llvm::Module*, clang::BackendAction, std::unique_ptr<llvm::raw_pwrite_stream, std::default_delete<llvm::raw_pwrite_stream> >) (/project/llvm/9.0.0/release/bin/clang-9+0x16c03b7)
+#13 0x0000000001f95d4a clang::CodeGenAction::ExecuteAction() (/project/llvm/9.0.0/release/bin/clang-9+0x1f95d4a)
+#14 0x0000000001af78d8 clang::FrontendAction::Execute() (/project/llvm/9.0.0/release/bin/clang-9+0x1af78d8)
+#15 0x0000000001aae290 clang::CompilerInstance::ExecuteAction(clang::FrontendAction&) (/project/llvm/9.0.0/release/bin/clang-9+0x1aae290)
+#16 0x0000000001b833e4 clang::ExecuteCompilerInvocation(clang::CompilerInstance*) (/project/llvm/9.0.0/release/bin/clang-9+0x1b833e4)
+#17 0x000000000087a656 cc1_main(llvm::ArrayRef<char const*>, char const*, void*) (/project/llvm/9.0.0/release/bin/clang-9+0x87a656)
+#18 0x000000000087864f main (/project/llvm/9.0.0/release/bin/clang-9+0x87864f)
+#19 0x00007f26f18a6545 __libc_start_main (/lib64/libc.so.6+0x22545)
+#20 0x0000000000875865 _start (/project/llvm/9.0.0/release/bin/clang-9+0x875865)
+clang-9: error: unable to execute command: Segmentation fault
+clang-9: error: clang frontend command failed due to signal (use -v to see invocation)
+clang version 9.0.0 (git@github.com:scampanoni/LLVM_installer.git 05e8bdd81a8fb30a2498881405757dbddd5535d6)
+Target: x86_64-unknown-linux-gnu
+Thread model: posix
+InstalledDir: /project/llvm/9.0.0/release/bin
+clang-9: note: diagnostic msg: PLEASE submit a bug report to https://bugs.llvm.org/ and include the crash backtrace, preprocessed source, and associated run script.
+clang-9: note: diagnostic msg: Error generating preprocessed source(s) - no preprocessable inputs.
+make: *** [carat] Error 254

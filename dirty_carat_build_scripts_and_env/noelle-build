@@ -1,0 +1,3 @@
+# cp carat-build/carat-config .config
+./scripts/pass_build.sh carat KARAT.cpp ; make clean ; make ; make bitcode ; make karat_noelle ; make final ; make isoimage
+

@@ -1,0 +1,70 @@
+#!/bin/bash -x
+
+BENCH=$1
+FILE_NAME=$2
+KARAT_FLAGS=$3
+MNT=$4
+
+PARSEC=${NAUT}/src/test/parsec-3.0
+
+# NAUT=environment var is set to your top level nautilus directory
+FW=${NAUT}/user/framework
+echo ${NAUT} ;
+echo ${FW} ;
+
+# Check for ramdisk in nautilus directory
+if [ ! -f "${NAUT}/ramdisk_parsec.img" ]
+then
+    echo "ramdisk.img is missing in your Nautilus directory!" ;
+    exit 1 ;
+fi
+
+
+# Set up sub-parsec directory terribly
+SUB_PS="apps"
+if [[ "$BENCH" == "streamcluster" ]]
+then
+    SUB_PS="kernels" ;
+    echo ${SUB_PS} ;
+elif [[ "$BENCH" == "canneal" ]]
+then
+    SUB_PS="kernels" ;
+    echo ${SUB_PS} ;
+else
+    echo ${SUB_PS} ;
+fi
+
+BENCH_DIR=${PARSEC}/pkgs/${SUB_PS}/${BENCH}
+
+# Mount
+echo "Mounting ..."
+sudo umount ${MNT} ;
+sudo mount -o loop ${NAUT}/ramdisk.img ${MNT} ;
+
+
+# Set up user framework, FW is set in environment
+echo "Setting up framework ..."
+cd ${FW} && \
+    make clean ; \
+    make framework ;
+
+
+# Set up NAS suite, build benchmark
+echo "Building benchmark ..."
+export KARAT=${KARAT_FLAGS} ; 
+cd ${PARSEC} && \
+    ./bin/parsecmgmt -a uninstall -p ${BENCH} -c clang && \
+    ./bin/parsecmgmt -a build -p ${BENCH} -c clang && \
+    sudo cp ${BENCH_DIR}/obj/amd64-linux.clang/${BENCH} ${MNT}/${FILE_NAME}.EXE && \
+    sudo cp ${BENCH_DIR}/inputs/I.txt ${MNT}/${FILE_NAME}I.TXT \
+
+
+# Unmount 
+echo "Unmounting...";
+sudo umount ${MNT} ;
+touch ${NAUT}/src/asm/ramdisk.s
+echo "Done!"
+
+
+
+

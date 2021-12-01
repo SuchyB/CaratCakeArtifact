@@ -1,0 +1,78 @@
+WITH STACK TRACE
+
+
+
+llvm-dis nautilus_opt.bc -o nautilus_opt.ll
+# Recompile (with full opt levels) new object files, binaries
+clang -fno-omit-frame-pointer -ffreestanding -fno-stack-protector -fno-strict-aliasing -fno-strict-overflow -mno-red-zone -mcmodel=large -O2   -Wall -Wno-unused-function -Wno-unused-variable -fno-common -Wstrict-overflow=5  -fgnu89-inline -m64  -Wno-pointer-sign -c nautilus_opt.bc -o .nautilus.o
+Stack dump:
+0.	Program arguments: /project/llvm/9.0.0/release/bin/clang-9 -cc1 -triple x86_64-unknown-linux-gnu -emit-obj -disable-free -disable-llvm-verifier -discard-value-names -main-file-name nautilus_opt.bc -mrelocation-model static -mthread-model posix -mdisable-fp-elim -relaxed-aliasing -fmath-errno -masm-verbose -mconstructor-aliases -ffreestanding -fuse-init-array -mcode-model large -target-cpu x86-64 -disable-red-zone -dwarf-column-info -debugger-tuning=gdb -momit-leaf-frame-pointer -coverage-notes-file /home/sgi9754/nautilus-karat/.nautilus.gcno -resource-dir /project/llvm/9.0.0/release/lib/clang/9.0.0 -O2 -Wall -Wno-unused-function -Wno-unused-variable -Wstrict-overflow=5 -Wno-pointer-sign -fdebug-compilation-dir /home/sgi9754/nautilus-karat -ferror-limit 19 -fmessage-length 0 -fwrapv -fgnu89-inline -fobjc-runtime=gcc -fno-common -fdiagnostics-show-option -fcolor-diagnostics -vectorize-loops -vectorize-slp -faddrsig -o .nautilus.o -x ir nautilus_opt.bc 
+1.	Code generation
+2.	Running pass 'Function Pass Manager' on module 'nautilus_opt.bc'.
+3.	Running pass 'X86 DAG->DAG Instruction Selection' on function '@main'
+ #0 0x00000000015545cf llvm::sys::PrintStackTrace(llvm::raw_ostream&) (/project/llvm/9.0.0/release/bin/clang-9+0x15545cf)
+ #1 0x0000000001552bf0 llvm::sys::RunSignalHandlers() (/project/llvm/9.0.0/release/bin/clang-9+0x1552bf0)
+ #2 0x0000000001554b11 SignalHandler(int) (/project/llvm/9.0.0/release/bin/clang-9+0x1554b11)
+ #3 0x00007f84499e1630 __restore_rt (/lib64/libpthread.so.0+0xf630)
+ #4 0x0000000001e72048 llvm::SelectionDAGBuilder::getValueImpl(llvm::Value const*) (/project/llvm/9.0.0/release/bin/clang-9+0x1e72048)
+ #5 0x0000000001e71bd4 llvm::SelectionDAGBuilder::getValue(llvm::Value const*) (/project/llvm/9.0.0/release/bin/clang-9+0x1e71bd4)
+ #6 0x0000000001e6a746 llvm::SelectionDAGBuilder::visitBitCast(llvm::User const&) (/project/llvm/9.0.0/release/bin/clang-9+0x1e6a746)
+ #7 0x0000000001e7229e llvm::SelectionDAGBuilder::getValueImpl(llvm::Value const*) (/project/llvm/9.0.0/release/bin/clang-9+0x1e7229e)
+ #8 0x0000000001e71bd4 llvm::SelectionDAGBuilder::getValue(llvm::Value const*) (/project/llvm/9.0.0/release/bin/clang-9+0x1e71bd4)
+ #9 0x0000000001e7ef3b llvm::SelectionDAGBuilder::LowerCallTo(llvm::ImmutableCallSite, llvm::SDValue, bool, llvm::BasicBlock const*) (/project/llvm/9.0.0/release/bin/clang-9+0x1e7ef3b)
+#10 0x0000000001e6b9d1 llvm::SelectionDAGBuilder::visitCall(llvm::CallInst const&) (/project/llvm/9.0.0/release/bin/clang-9+0x1e6b9d1)
+#11 0x0000000001e61097 llvm::SelectionDAGBuilder::visit(llvm::Instruction const&) (/project/llvm/9.0.0/release/bin/clang-9+0x1e61097)
+#12 0x0000000001eda6b0 llvm::SelectionDAGISel::SelectBasicBlock(llvm::ilist_iterator<llvm::ilist_detail::node_options<llvm::Instruction, false, false, void>, false, true>, llvm::ilist_iterator<llvm::ilist_detail::node_options<llvm::Instruction, false, false, void>, false, true>, bool&) (/project/llvm/9.0.0/release/bin/clang-9+0x1eda6b0)
+#13 0x0000000001eda3ea llvm::SelectionDAGISel::SelectAllBasicBlocks(llvm::Function const&) (/project/llvm/9.0.0/release/bin/clang-9+0x1eda3ea)
+#14 0x0000000001ed7c86 llvm::SelectionDAGISel::runOnMachineFunction(llvm::MachineFunction&) (/project/llvm/9.0.0/release/bin/clang-9+0x1ed7c86)
+#15 0x00000000008d9d58 (anonymous namespace)::X86DAGToDAGISel::runOnMachineFunction(llvm::MachineFunction&) (/project/llvm/9.0.0/release/bin/clang-9+0x8d9d58)
+#16 0x0000000000e76b2e llvm::MachineFunctionPass::runOnFunction(llvm::Function&) (/project/llvm/9.0.0/release/bin/clang-9+0xe76b2e)
+#17 0x000000000113dbc6 llvm::FPPassManager::runOnFunction(llvm::Function&) (/project/llvm/9.0.0/release/bin/clang-9+0x113dbc6)
+#18 0x000000000113de73 llvm::FPPassManager::runOnModule(llvm::Module&) (/project/llvm/9.0.0/release/bin/clang-9+0x113de73)
+#19 0x000000000113e31a llvm::legacy::PassManagerImpl::run(llvm::Module&) (/project/llvm/9.0.0/release/bin/clang-9+0x113e31a)
+#20 0x00000000016c03f2 clang::EmitBackendOutput(clang::DiagnosticsEngine&, clang::HeaderSearchOptions const&, clang::CodeGenOptions const&, clang::TargetOptions const&, clang::LangOptions const&, llvm::DataLayout const&, llvm::Module*, clang::BackendAction, std::unique_ptr<llvm::raw_pwrite_stream, std::default_delete<llvm::raw_pwrite_stream> >) (/project/llvm/9.0.0/release/bin/clang-9+0x16c03f2)
+#21 0x0000000001f95d4a clang::CodeGenAction::ExecuteAction() (/project/llvm/9.0.0/release/bin/clang-9+0x1f95d4a)
+#22 0x0000000001af78d8 clang::FrontendAction::Execute() (/project/llvm/9.0.0/release/bin/clang-9+0x1af78d8)
+#23 0x0000000001aae290 clang::CompilerInstance::ExecuteAction(clang::FrontendAction&) (/project/llvm/9.0.0/release/bin/clang-9+0x1aae290)
+#24 0x0000000001b833e4 clang::ExecuteCompilerInvocation(clang::CompilerInstance*) (/project/llvm/9.0.0/release/bin/clang-9+0x1b833e4)
+#25 0x000000000087a656 cc1_main(llvm::ArrayRef<char const*>, char const*, void*) (/project/llvm/9.0.0/release/bin/clang-9+0x87a656)
+#26 0x000000000087864f main (/project/llvm/9.0.0/release/bin/clang-9+0x87864f)
+#27 0x00007f84485bb545 __libc_start_main (/lib64/libc.so.6+0x22545)
+#28 0x0000000000875865 _start (/project/llvm/9.0.0/release/bin/clang-9+0x875865)
+clang-9: error: unable to execute command: Segmentation fault
+clang-9: error: clang frontend command failed due to signal (use -v to see invocation)
+clang version 9.0.0 (git@github.com:scampanoni/LLVM_installer.git 05e8bdd81a8fb30a2498881405757dbddd5535d6)
+Target: x86_64-unknown-linux-gnu
+Thread model: posix
+InstalledDir: /project/llvm/9.0.0/release/bin
+clang-9: note: diagnostic msg: PLEASE submit a bug report to https://bugs.llvm.org/ and include the crash backtrace, preprocessed source, and associated run script.
+clang-9: note: diagnostic msg: Error generating preprocessed source(s) - no preprocessable inputs.
+make: *** [carat] Error 254
+(wllvm-test) [sgi9754@peroni nautilus-karat]$ ls -ltr
+
+
+
+
+
+-------
+
+WITHOUT STACK TRACE
+
+
+
+
+
+clang -fno-omit-frame-pointer -ffreestanding -fno-stack-protector -fno-strict-aliasing -fno-strict-overflow -mno-red-zone -mcmodel=large -O2   -Wall -Wno-unused-function -Wno-unused-variable -fno-common -Wstrict-overflow=5  -fgnu89-inline -m64  -Wno-pointer-sign -c nautilus.bc -o .nautilus.o
+fatal error: error in backend: Cannot select: 0x9e28bf8: i64 = bitcast 0x9e28b90
+In function: main
+clang-9: error: clang frontend command failed with exit code 70 (use -v to see invocation)
+clang version 9.0.0 (git@github.com:scampanoni/LLVM_installer.git 05e8bdd81a8fb30a2498881405757dbddd5535d6)
+Target: x86_64-unknown-linux-gnu
+Thread model: posix
+InstalledDir: /project/llvm/9.0.0/release/bin
+clang-9: note: diagnostic msg: PLEASE submit a bug report to https://bugs.llvm.org/ and include the crash backtrace, preprocessed source, and associated run script.
+clang-9: note: diagnostic msg: Error generating preprocessed source(s) - no preprocessable inputs.
+make: *** [carat] Error 70
+
+
+

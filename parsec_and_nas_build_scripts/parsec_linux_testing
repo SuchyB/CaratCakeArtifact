@@ -1,0 +1,40 @@
+#!/bin/bash -x
+
+BENCH=$1
+FILE_NAME=$2
+KARAT_FLAGS=$3
+
+PARSEC=${NAUT}/src/test/parsec-3.0
+
+# NAUT=environment var is set to your top level nautilus directory
+FW=${NAUT}/user/framework
+echo ${NAUT} ;
+echo ${FW} ;
+
+
+# Set up sub-parsec directory terribly
+SUB_PS="apps"
+if [[ "$BENCH" == "streamcluster" ]]
+then
+    SUB_PS="kernels" ;
+    echo ${SUB_PS} ;
+elif [[ "$BENCH" == "canneal" ]]
+then
+    SUB_PS="kernels" ;
+    echo ${SUB_PS} ;
+else
+    echo ${SUB_PS} ;
+fi
+
+BENCH_DIR=${PARSEC}/pkgs/${SUB_PS}/${BENCH}
+
+
+# Set up NAS suite, build benchmark
+echo "Building benchmark ..."
+export KARAT=${KARAT_FLAGS} ; 
+cd ${PARSEC} && \
+    ./bin/parsecmgmt -a uninstall -p ${BENCH} -c clang && \
+    ./bin/parsecmgmt -a build -p ${BENCH} -c clang && \
+    cp ${BENCH_DIR}/obj/amd64-linux.clang/${BENCH} ${PARSEC}/../parsec-bins/${FILE_NAME} && \
+    cp ${BENCH_DIR}/inputs/I.txt ${PARSEC}/../${FILE_NAME}I.TXT \
+

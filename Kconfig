@@ -1,0 +1,1641 @@
+mainmenu "Nautilus AeroKernel Configuration"
+
+
+menu "Platform"
+
+    choice
+        prompt "Target Selection"
+        default X86_64_HOST
+
+        config X86_64_HOST
+            bool "x86_64 Host (including Intel Xeon Phi KNL)"
+
+        config XEON_PHI
+            bool "Intel Xeon Phi Accelerator (KNC)"
+    
+        config HVM_HRT
+            bool "Hybrid Runtime AeroKernel (HRT for HVM/Multiverse)"
+
+        config GEM5
+            bool "GEM5-compatible x86_64 kernel"
+
+        config GEM5_FORCE_APIC_TIMER_CALIBRATION
+	    depends on GEM5
+	    bool "Force APIC timer calibration"
+	    help
+	       Skip detection of APIC bus frequency, and CPU cycles
+	       per tick and simply set them to desired values.  Note
+	       that Gem5 gets timers right, but given how slow it is,
+	       it can feel ridiculous in real-time, especially
+	       when used interactively.
+	       DO NOT SET THIS IF YOU WANT ACCURATE SIMULATED TIME
+
+        config GEM5_APIC_BUS_FREQ_HZ
+	    depends on GEM5_FORCE_APIC_TIMER_CALIBRATION
+	    default 10000
+	    int "APIC bus frequency (HZ)"
+            help
+	       Desired APIC bus frequency
+	       The smaller this number is, the more frequent timer interrupts will be.
+	       If it is too small, you'll be in an interrupt storm.
+
+       config GEM5_APIC_CYCLES_PER_US
+	    depends on GEM5_FORCE_APIC_TIMER_CALIBRATION
+	    default 10
+	    int "CPU cycles per microsecond"
+            help
+	       The smaller this number is, the more frequent timer interrupts will be.
+	       If it is too small, you'll be in an interrupt storm.
+    endchoice
+
+    config MAX_CPUS
+        int "Maximum Number of CPUs"
+        range 1 2048
+        default "256"
+        help 
+          Specifies the maximum number of hardware CPUs supported by Nautilus 
+          For uniprocessor environments, set this to 1
+
+    config MAX_IOAPICS
+        int "Maximum Number of IOAPICS"
+        range 1 255
+        default "16"
+        help
+          Specifies the maximum number of IOAPICS supported by Nautilus
+
+    config HRT_HIHALF_OFFSET
+        hex "HRT High-half offset"
+        default 0xffff800000000000
+        depends on HVM_HRT
+        help
+          Sets the fixed virtual-to-physical address mapping for the HRT
+
+    config HRT_GPA_MAP_REQ
+        hex "HRT Max GPA to map"
+        default 0x200000000
+        depends on HVM_HRT
+        help
+          Sets the default amount of physical memory that the VMM should
+          attempt to map for the HRT
+
+    config HRT_COMM_PAGE
+        hex "GPA of HRT/HVM communication page"
+        default 0x1fffff000
+        depends on HVM_HRT
+        help
+          Sets the default page address at which the VMM and HRT will
+          communicate information
+
+    config HVM_INT_VEC
+        int "HVM/HRT Interrupt vector"
+        default 255
+        range 33 255
+        depends on HVM_HRT
+        help
+          Sets the interrupt vector to use for communication between
+          the VMM and the HRT
+
+    choice 
+        prompt "HRT Page Size Request"
+        depends on HVM_HRT
+        default HRT_PS_2M
+        help
+            Requests a given page size to map the initial page tables 
+            from the VMM
+
+        config HRT_PS_512G
+          bool "512GB Pages"
+          
+        config HRT_PS_1G
+          bool "1GB Pages"
+
+        config HRT_PS_2M
+          bool "2MB Pages"
+
+        config HRT_PS_4K
+          bool "4KB Pages"
+
+    endchoice
+
+    config PALACIOS
+    	bool "Support for creating VMs using Palacios"
+        depends on X86_64_HOST
+        default 0
+    config PALACIOS_DIR
+        depends on PALACIOS
+        string "Path to Palacios VMM tree"
+            default "../palacios"
+            help
+              Path to the Palacios VMM build.  Palacios must be built for
+              Nautilus, and both palacios/libv3vee.a and libnautilus.a must exist
+    config PALACIOS_EMBED_VM_IMG
+    	bool "Embed VM image"
+        depends on PALACIOS
+        default 0
+    config PALACIOS_EMBEDDED_VM_IMG
+        depends on PALACIOS
+        string "Path to Palacios VM image to embed"
+            default "management_vm.img"
+            help
+              Path to the image that will be embedded
+    config PALACIOS_MGMT_VM
+    	bool "Launch embedded VM at boot as Management VM"
+        depends on PALACIOS
+        default 0
+        
+endmenu
+
+menu "Build"
+
+    config USE_NAUT_BUILTINS
+        bool "Use built-in utility functions"
+        default y
+        help
+          Compiles NK with its own implementations of functions
+          like strcpy etc., as opposed to using the compiler-builtins,
+	  which might not cover all of the ones needed.
+
+    config CXX_SUPPORT
+      bool "Enable C++ support"
+      default y
+      help
+        Compiles the Nautilus kernel with C++ support. Necessary for,
+        e.g. C++ HRT integration
+
+    config RUST_SUPPORT
+      bool "Enable Rust support"
+      default n
+      help
+        Adds support for Rust code, and builds the Rust example and Shell command
+
+   
+    choice
+      prompt "Compiler and related toolchain to use"
+      default USE_GCC
+      help
+          Chose whether to use GCC or Clang to build Nautilus
+          Currently, GCC is by far the most tested option
+	  No guarantees that Clang will be able to build everything
+	  Clang/WLLVM will generate a bitcode file for the entire kernel
+     config USE_GCC
+       bool "GCC"
+     config USE_CLANG
+       bool "Clang/LLVM"
+     config USE_WLLVM
+       bool "Clang/WLLVM (generates top level bitcode file)" 
+    endchoice
+    config USE_NOELLE 
+       bool "Enable Noelle"
+       default false
+       depends on USE_WLLVM
+       help
+	   Enables Noelle for compiler analyses (only applies to KARAT) 
+           USAGE: make noelle_download ; make ; make bitcode ; make noelle_karat ; make final ; make isoimage
+    config USE_WLLVM_WHOLE_OPT
+       bool "Whole kernel optimization"
+       default false
+       depends on USE_WLLVM
+       help
+	   Re-optimizes entire kernel as a single unit
+           USAGE: 
+		make 
+		make whole_opt
+		make isoimage
+    config COMPILER_PREFIX
+       string "Prefix for compiler toolchain commands"
+       default ""
+       help
+           Relevant toolchain commands are prepended with this string
+	   to allow for cross-compilation, etc
+
+    config COMPILER_SUFFIX
+       string "Suffix for compiler toolchain commands"
+       default ""
+       help
+           Relevant toolchain commands are appended with this string
+	   to allow for different versions, etc
+   
+    config TOOLCHAIN_ROOT
+      string "Toolchain Root"
+      help 
+       Directory where the intended compiler toolchain, binutils, libraries, grub, etc are installed.
+       You probably want this to be blank and use PATH mechanisms to get the tools you need
+
+
+endmenu
+
+
+menu "Configuration"
+
+config MAX_THREADS
+    int "Maximum number of threads in system"
+    default 1024
+    help
+      Maximum number of threads in system (or any core) at once
+
+config RUN_TESTS_AT_BOOT
+    bool "Run all tests from the testing framework at boot"
+    default n
+    help
+      This causes the testing framework to be run immediately after
+      boot and before the shell or runtimes are launched. It will then
+      exit immediately using QEMU. This allows us to have automated
+      testing using continuous integration tools.
+
+config THREAD_EXIT_KEYCODE
+    int "Thread Exit Keycode"
+    range 1 255
+    default "196"
+    help
+        uses a special thread exit keycode
+
+config USE_TICKETLOCKS
+    bool "Use Ticket/Bakery locks instead of default spin"
+    default n
+    help
+      Uses ticketlocks (similar to Linux impl.) instead of
+      default spinlocks
+
+config PARTITION_SUPPORT
+    bool "Enable support for device partitioning"
+    default n
+    help
+      Enable disk/device partitioning
+
+config USE_IST 
+    bool "Enable IST"
+    default n
+    help
+      Enable IST (separate interrupt stacks)
+
+config PROCESSES
+    bool "Enable support for process creation"
+    select USE_IST
+    default n
+    help
+      Enable processes
+
+config CARAT_PROCESS
+    bool "Use CARAT process instead of paging"
+    depends on PROCESSES
+    default n
+    help
+      Use CARAT for processes
+
+config LINUX_SYSCALLS
+    bool "Enable support for Linux syscall emulation"
+    depends on PROCESSES
+    default y
+    help
+      Enable Linux syscall interface
+
+config LOADER_SIGNATURE
+    bool "Use signature verification of loaded user processes"
+    depends on PROCESSES
+    default n
+    help
+      Use signature verification when loading user processes
+
+config VIRTUAL_CONSOLE_DISPLAY_NAME
+   bool "Display name of current virtual console"
+   default y
+   help
+        Puts the name of the current virtual console in the upper left
+	
+config VIRTUAL_CONSOLE_CHARDEV_CONSOLE
+   bool "Place a virtual console interface on a character device"
+   default n
+   help
+        Starts a virtual console interface on a given character device
+        This allows interaction with VCs much like the VGA console
+        does
+
+config VIRTUAL_CONSOLE_CHARDEV_CONSOLE_NAME
+    string "Character device name to use"
+    default "serial0"
+    depends on VIRTUAL_CONSOLE_CHARDEV_CONSOLE
+    help
+        The character device port name to use for this console
+
+
+config VIRTUAL_CONSOLE_SERIAL_MIRROR
+    bool "Mirror virtual console log output to serial"
+    default n
+    help
+	Writes any log output 
+        traffic to serial port in addition to its
+        target virtual console
+
+config VIRTUAL_CONSOLE_SERIAL_MIRROR_ALL
+    bool "Mirror all virtual console output to serial"
+    default n
+    depends on VIRTUAL_CONSOLE_SERIAL_MIRROR
+    help
+	Writes all printfs, logs, puts, putchars, etc
+        traffic to serial port in addition to their
+        target virtual consoles;  direct displays
+        (screen clears, display char, etc) are not
+        currently mirrored.
+
+  menu "Scheduler Options"
+
+    config UTILIZATION_LIMIT
+    int "Utilization limit (%)"
+    range 0 100
+    default 99
+    help
+       The maximum percent utilization the scheduler will allow
+       on a core.   This gives headroom for the scheduler itself.
+
+    config SPORADIC_RESERVATION
+    int "Sporadic reservation (%)"
+    range 0 100
+    default 10
+    help
+       The percentage utilization the scheduler will dedicate
+       to sporadic threads and tasks on each core.  Sporadic
+       tasks that exceed this are not admitted, even if 
+       there is time available. 
+
+    config APERIODIC_RESERVATION
+    int "Aperiodic reservation (%)"
+    range 0 100
+    default 10
+    help
+       The percentage utilization the scheduler will dedicate
+       to aperiodic threads on each core.   Aperiodic threads
+       can exceed this - they also soak up any time not being
+       used by RT threads. 
+
+    config HZ
+       int "Timer Interrupt Frequency"
+       range 10 10000
+       default "10"
+       help
+        Specifies the tick rate for timers and aperiodic
+        scheduling.  The reciprical of this number is 
+        the scheduling quantum for aperiodic (but not RT)
+        threads. IMPORTANT NOTE: if you are using a watchdog,
+	you should set this to be > 1/(watchdog period)
+
+    config INTERRUPT_REINJECTION_DELAY_NS
+       int "Interrupt Reinjection Delay (in ns)"
+       default "10000"
+       help
+        If a timer or kick interrupt occurs when the cpu
+        is not preemptable, it will be reinjected (as a timer
+        interrupt) after this delay.   The result is that 
+        scheduler-driving interrupts is not lost, just delayed.
+
+    config AUTO_REAP
+       bool "Reap threads automatically"
+       default n
+       help
+        Should core zero periodically reap the global
+        thread list of dead detached threads?  Only core 0
+        does this. 
+
+    config AUTO_REAP_PERIOD_MS
+       depends on AUTO_REAP
+       int "Reaping Period (ms)"
+       range 10 10000
+       default "1000"
+       help
+        The target period between reaping the global
+        thread list of dead detached threads. 
+
+    config WORK_STEALING
+       bool "Work stealing"
+       default n
+       help
+        If enabled an idle cpu will attempt to steal
+        runnable threads from other cpus.  
+
+    config WORK_STEALING_INTERVAL_MS
+       depends on WORK_STEALING
+       int "Work stealing interval (ms)"
+       range 1 10000
+       default "10"
+       help
+        The target period between work-stealing attempts
+	by the idle thread.  This is in terms of 
+        the amount of time the idle thread itself executes
+	not the real-
+
+    config WORK_STEALING_AMOUNT
+       depends on WORK_STEALING
+       int "Work stealing amount"
+       range 1 100
+       default "4"
+       help
+        The number of threads the idle thread will
+        attempt to steal every time work stealing is
+	run.
+
+    config TASK_IN_SCHED
+        bool "Handle tasks of known size in scheduler"
+	default true
+	help
+	   When enabled, each cpu's scheduler will execute tasks of
+	   known size when no real-time task would be impeded.  This
+	   lifts such tasks to a priority just below real-time threads.
+	   Note that the eager EDF properties of the scheduler are maintained -
+	   if an RT thread is runnable, it will still run in preference
+	   to in-scheduler task execution, no matter how much slack is available.
+
+    config TASK_THREAD
+        bool "Handle tasks in a special thread"
+        default true;
+	help
+	  When enabled, each cpu has a thread that consumes tasks.
+	  The thread can run at an arbitrary aperiodic priority.
+
+    config TASK_THREAD_PRIORITY
+       depends on TASK_THREAD
+       int "Aperiodic priority for task threads"
+       default 100000000
+       help 
+          Priority for the task threads.  The default here is
+	  the quantum in ns.   By adjusting this, you can adjust
+	  how much priority unsized tasks effectively have in the system.
+
+    config TASK_IN_IDLE
+       bool "Handle tasks within idle loop"
+       default false
+       help
+          When enabled, each cpu's idle loop will execute tasks prior
+	  to attempting work stealing.
+	  
+    config TASK_IN_IDLE_NOPREEMPT
+       depends on TASK_IN_IDLE
+       bool "Execute tasks within idle with preemption disabled"
+       default false
+       help
+          When enabled, the idle loop executes tasks with preemption
+	  disabled,  which can result in priority inversion for
+	  real-time threads.  However, with preemption enabled, the idle loop
+	  may start a task, then get preempted.  The task is then in
+	  limbo until the idle loop is run again, which may be never
+	  given that it has the lowest possible priority in the
+	  system.  The purpose of this option is to choose
+	  which of these behaviors you want if you are executing tasks
+	  in idle loops.
+	  
+    config INTERRUPT_THREAD
+       bool "Restrict interrupts to special real-time interrupt thread"
+       default false
+       help 
+          When enabled, all interrupts, except scheduling-related
+          interrupts, are ignored except when a special, per-core
+          interrupt thread is running.  The interrupt thread is a
+          periodic real-time thread.  This forces interrupt handlers
+          to start only at well-constrained points in time.   
+          If interrupt handlers are of bounded, known duration, they 
+          also then finish before well-contrained points in time 
+          (max: end of slice + interrupt duration).   The downside
+          of this mechanism is that interrupts are delayed until 
+          the interrupt thread is run, increasing interrupt latency.
+          Note that threads can insulate themselves from interrupts
+          outside of this mechanism, using the interrupt_priority_class
+          mechanism. 
+
+    config INTERRUPT_THREAD_PERIOD_US
+       depends on INTERRUPT_THREAD
+       int "Period for the interrupt thread (us)"
+       range 500 10000
+       default 1000
+       help 
+          The interrupt thread will run this often
+
+    config INTERRUPT_THREAD_SLICE_US
+       depends on INTERRUPT_THREAD
+       int "Slice for the interrupt thread (us)"
+       range 100 5000
+       default 100
+       help 
+          The interrupt thread will execute for this long when it runs
+
+    config INTERRUPT_THREAD_ALLOW_IDLE
+       depends on INTERRUPT_THREAD
+       bool "Also allow interrupts when running idle thread"
+       default false
+       help 
+          Enable interrupts while running the idle thread
+
+    choice
+        prompt "Scheduling Model For Aperiodic Threads"
+        default APERIODIC_ROUND_ROBIN
+
+        config APERIODIC_DYNAMIC_QUANTUM
+            bool "Dynamic, Quantum-based Priority"
+            help 
+               Aperiodic threads have dynamic priority based on a 
+               fixed priority and their runtime within a scheduling quantum.  
+               Longer runtime means lower priority.
+
+        config APERIODIC_DYNAMIC_LIFETIME
+            bool "Dynamic, Lifetime-based Priority"
+            help  
+               Aperiodic threads have dynamic priority based on a 
+               fixed priority and their total runtime.  
+               Longer runtime means lower priority.
+
+        config APERIODIC_LOTTERY
+            bool "Lottery scheduling"
+            help 
+               Aperiodic threads are given a random priority based on 
+               the fixed priorities of all aperiodic threads on the core.
+ 
+        config APERIODIC_ROUND_ROBIN 
+            bool "Round-robin scheduling"
+            help 
+               Aperiodic threads are scheduled round-robbin
+      
+
+    endchoice
+  endmenu
+
+  menu "Fiber Options"
+
+    config FIBER_ENABLE
+        bool "Enable fibers in the kernel"
+        default true
+	    help
+	      Enables fibers in the kernel. Each cpu has a thread that consumes fibers.
+	      The thread can run at an arbitrary aperiodic priority. Turns off stack
+              checking for threads because fibers change stacks.
+
+    config FIBER_THREAD_STACK_SIZE
+       depends on FIBER_ENABLE
+       int "Stack size for fiber threads"
+       default 2097152
+       help 
+          Controls the size of the stack for fiber threads.  The default here is 2 MB.
+ 
+    config FIBER_THREAD_PRIORITY
+       depends on FIBER_ENABLE
+       int "Aperiodic priority for fiber threads"
+       default 100000000
+       help 
+          Priority for the fiber threads.  The default here is
+	      the quantum in ns.   By adjusting this, you can adjust
+	      how much priority fibers effectively have in the system.
+
+    config FIBER_FSAVE
+       depends on FIBER_ENABLE && XSAVE_SUPPORT
+       bool "Save floating point state for fibers"
+       default true
+       help 
+         When enabled, will save the floating point state for fibers during context switches. 
+
+    choice 
+        prompt "Select Fiber Thread Idle Type"
+        depends on FIBER_ENABLE
+        default FIBER_ENABLE_WAIT
+
+        config FIBER_ENABLE_SPIN
+        bool "FIBER_THREAD_SPIN"
+        depends on FIBER_ENABLE
+        help
+            If enabled, the fiber thread will spin (yield continuously) 
+            even when no fibers are in the fiber queue.
+
+        config FIBER_ENABLE_SLEEP
+        bool "FIBER_THREAD_SLEEP"
+        depends on FIBER_ENABLE
+        help
+            If enabled, the fiber thread will sleep when no fibers are 
+            in the fiber queue. The fiber thread will be woken up when 
+            enough time elapses or a fiber is added to the fiber queue.
+        
+        config FIBER_ENABLE_WAIT
+        bool "FIBER_THREAD_WAIT"
+        depends on FIBER_ENABLE
+        help
+            If enabled, the fiber thread will wait on a wait queue when no 
+            fibers are in the fiber queue. The fiber thread will be woken up
+            when enough time elapses or a fiber is added to the fiber queue.
+
+    endchoice
+
+    config FIBER_THREAD_SLEEP_TIME
+         int "sleep time for fiber threads"
+         depends on ENABLE_SLEEP
+         default 100000000
+         help
+           The amount of time the fiber thread will sleep for when
+           there are no fibers on the fiber queue.
+
+    config TEST_FIBERS
+        bool "Enable fiber tests commands in the shell"
+        depends on FIBER_ENABLE
+        default false
+        help
+          This option will enable fiber test commands in the shell.
+
+  endmenu 
+
+config REAL_MODE_INTERFACE
+   bool "Enable the Long->Real interface"
+   default n
+   help
+      Allows long mode code in Nautilus to execute real-mode
+      software interrupts (e.g., BIOS, VESA, etc)
+
+config DEBUG_REAL_MODE_INTERFACE
+   bool "Debug Long->Real interface"
+   default n
+   depends on REAL_MODE_INTERFACE
+   help
+      Adds debugging output for the long->real interface
+
+config REAL_MODE_INTERFACE_SEGMENT
+   hex "Segment (64K total) used for Long->Real interface"
+   default 0x8000
+   depends on REAL_MODE_INTERFACE
+   help
+      Segment used for the real-mode interface
+      The first 32K is reserved for the trampoline
+      code and data. The second 32K can be used by
+      code invoking real mode interrupts
+
+
+menu "Watchdog Options"
+config WATCHDOG
+   bool "Enable Watchdog Timer"
+   default n
+   help
+       Force an NMI if a dedicated timer expires
+       The dedicated timer is reset during interupt
+       handling.   The primary purpose is to catch
+       deadlocks, including with the monitor
+
+config WATCHDOG_DEFAULT_TIME_MS
+   depends on WATCHDOG
+   int "Default time in ms before expiration"
+   default 1000
+   help
+       How long we can go without resetting the watchdog timer
+       
+config DEBUG_WATCHDOG
+   bool "Debug Watchdog Timer"
+   default n
+   depends on WATCHDOG
+   help
+      Adds debugging output for watchdog
+      NOTE:  THIS IS USUALLY A BAD IDEA THAT CAN LEAD TO DEADLOCK
+endmenu
+
+config ISOCORE
+   bool "Enable Isolated Core Execution"
+   default n
+   help 
+      Allows us to dedicate a core to the
+      execution of a function without any
+      interference from other cores
+
+config DEBUG_ISOCORE
+   bool "Debug Isolated Core Execution"
+   default n
+   depends on ISOCORE
+   help
+      Adds debugging output for isolated core execution
+      The low-level code does not have debugging output
+
+config CACHEPART
+   bool "Enable cache partitioning"
+   default n
+   depends on X86_64_HOST
+   help
+      Allows cache partitioning
+
+config CACHEPART_THREAD_DEFAULT_PERCENT
+   int "Percentage of cache to reserve for default use by threads"
+   range 5 100
+   default 20
+   depends on CACHEPART
+   help
+      This portion of the cache will be used by threads that make no special requests
+
+config CACHEPART_INTERRUPT
+   bool "Enable interrupt partition"
+   default n
+   depends on CACHEPART
+   help
+      Create special partition for interrupts (otherwise they
+      use the default thread partition)
+
+config CACHEPART_INTERRUPT_PERCENT
+   int "Percentage of cache to reserve for use by interrupt handlers"
+   range 5 100
+   default 10
+   depends on CACHEPART_INTERRUPT
+   help
+      This portion of the cache that will be used by interrupt handlers
+
+config DEBUG_CACHEPART
+   bool "Debug cache partitioning"
+   default n
+   depends on CACHEPART
+   help
+      Adds debugging output for cache partitioning
+
+config TEST_CACHEPART
+   bool "Add cache partitioning tests"
+   default n
+   depends on CACHEPART
+   help
+      Adds the tests for for cache partitioning
+
+menu "Garbage Collection Options"
+
+   config GARBAGE_COLLECTION
+   bool "Enable Garbage Collection"
+   default n
+   help
+      If enabled, a conservative garbage collector is
+      used to garbage collect the kernel/HRT.  mallocs() pass to the
+      GC, frees() are ignored, and mallocs can trigger global GC
+      WARNING: Garbage collection in Nautilus is a highly experimental feature.   If you
+      don't know if you need this, you do not.
+
+
+   choice 
+    prompt "Select Garbage Collector"
+    depends on GARBAGE_COLLECTION
+    default ENABLE_PDSGC
+
+     config ENABLE_BDWGC
+      bool "BDWGC"
+      depends on GARBAGE_COLLECTION
+      help
+        If enabled, the BDWGC garbage colector is used.
+        WARNING: BDWGC integration in Nautilus is a highly experimental feature.   If you
+        don't know if you need this, you do not.
+
+     config ENABLE_PDSGC
+      bool "PDSGC"
+      depends on GARBAGE_COLLECTION
+      help
+        If enabled, the home-grown PDSGC garbage colector is used.
+        WARNING: PDSGC integration in Nautilus is a highly experimental feature.   If you
+        don't know if you need this, you do not.
+
+   endchoice
+ 
+   config ALIGN_BDWGC
+       bool "Force allocations in the BDWGC garbage collector to be aligned to their own size"
+       default n
+       depends on ENABLE_BDWGC
+       help
+         If enabled, BDWGC allocations will be aligned to their own size, as in the buddy system allocator
+
+
+   config DEBUG_BDWGC
+       bool "Debug the BDWGC garbage collector"
+       default n
+       depends on ENABLE_BDWGC
+       help
+         If enabled, print debugging output from BDWGC
+
+   config EXPLICIT_ONLY_PDSGC
+       bool "Only use PDSGC explictly"
+       default n
+       depends on ENABLE_PDSGC
+       help
+         If enabled failing mallocs do *not* trigger gc and frees do
+         deallocation.  PDSGC can then be used to explicitly leak check
+         or explicitly do garbage collection of leaked data
+
+   config DEBUG_PDSGC
+       bool "Debug the PDSGC garbage collector"
+       default n
+       depends on ENABLE_PDSGC
+       help
+         If enabled, print debugging output from PDSGC
+
+  config TEST_BDWGC 
+   bool "Include the BDWGC garbage collection test suite"
+   default n
+   depends on ENABLE_BDWGC
+   help
+      Adddes test suite for BDWGC, which can be run from the shell
+
+  endmenu
+
+    menu "FPU Options"
+
+    config XSAVE_SUPPORT
+      bool "Allow saving of FPRs with XSAVE instructions"
+      default true
+      help
+        Adds xsave instruction support to Nautilus. Processor
+        must have xsave support or this feature will be ignored.
+
+    config XSAVE_SSE_SUPPORT
+          bool "Enable saving of SSE registers with XSAVE"
+          default true
+          depends on XSAVE_SUPPORT
+          help
+            Will save SSE state with XSAVE when enabled. Required
+            in order to save AVX and AVX512f state. This will
+            be ignored if processor does not have SSE registers.
+
+    config XSAVE_AVX_SUPPORT
+              bool "Enable saving of AVX registers with XSAVE"
+              default true
+              depends on XSAVE_SUPPORT
+              help
+                Will save AVX state with XSAVE when enabled. Required
+                in order to save AVX512f state. This opt. will
+                be ignored if processor does not have AVX registers.
+
+    config XSAVE_AVX512F_SUPPORT
+                  bool "Enable saving of AVX512f registers with XSAVE"
+                  default true
+                  depends on XSAVE_SUPPORT
+                  help
+                    Will save AVX512f state with XSAVE when enabled. This
+                    opt will be ignored if processor does not 
+                    have avx512f registers.
+
+  endmenu 
+endmenu
+
+menu "Optimizations"
+
+    config FPU_SAVE
+      bool "Save FPU state on all context switches"
+      default y
+      help
+        Compiles the kernel to save FPU state on every context switch. 
+        This is not strictly necessary if processors are not virtualized 
+        (by the HRT).
+    
+    config KICK_SCHEDULE
+        bool "Kick cores with IPIs on scheduling events"
+        default n
+        help
+          This will reduce the latency and variance of scheduling events
+          by kicking the remote CPU with an IPI, causing a scheduling event
+          to occur immediately, rather than waiting for next timer tick or
+          current thread to yield.
+
+    config HALT_WHILE_IDLE
+        bool "Halt the CPU when idle"
+        default n
+        help
+            This will cause the CPU to go into a halt in an idle thread when
+            there is nothing else important to run. Can potentially reduce
+            memory traffic do to yields(), especially on platforms like the 
+            Xeon Phi.
+
+    config THREAD_OPTIMIZE
+        bool "Optimize threading for performance"
+        default n
+        help
+            Disables paranoid condition checking and optimizes thread functions
+            for maximum performance.
+
+endmenu
+
+      
+    
+
+menu Debugging
+
+    config DEBUG_INFO
+      bool "Compile with Debug Symbols"
+      default n
+      help
+        Compiles Nautilus with GCC debugging information. This
+        is useful for remote debugging with GDB and QEMU/BOCHS.
+
+    config DEBUG_PRINTS
+  	  bool "Enable Debugging Prints"
+	  default n
+	  help
+	    Compiles the Nautilus kernel with debugging prints
+
+    config ENABLE_ASSERTS
+      bool "Enable Runtime Assertions"
+      default n
+      help
+        This will enable runtime assert statements. If this is
+        disabled, they will not be generated
+
+    config PROFILE
+      bool "Enable Profiling"
+      default n
+      help
+        Profile select function entries and exits
+
+    config DEBUG_PROFILE
+      bool "Debug Profiling"
+      default n
+      depends on PROFILE
+      help
+        Turn on debug prints for the profiler subsystem
+
+    config SILENCE_UNDEF_ERR
+      bool "Silence Errors for Undefined Functions"
+      default n
+      help
+        Mutes error prints related to undefined 
+        libc compatibility functions. Useful when 
+        porting applications to HRT model.
+
+    config ENABLE_STACK_CHECK
+    bool "Enable Runtime Stack Overrun Checking"
+    default n
+    depends on !FIBER_ENABLE
+    help
+      This checks the stack pointer on every thread switch to
+      make sure that a thread hasn't overrun its allocated 
+      stack.   Note that enabling fibers must disable
+      this debugging feature, since fibers context switch
+      stacks within a thread
+
+   config ENABLE_REMOTE_DEBUGGING
+    depends on !HVM_HRT
+    bool "Enable Remote Debugging"
+    default n
+    help
+      This allows remote debugging, currently using GDB.  It integrates
+      a GDB stub that talks (currently) via a serial port using
+      polled operation.   You must also enable the relevant port
+      in the serial configuration under the device section.  
+      Note that the kernel will halt at startup until the 
+      debugger attaches.  
+
+    config ATTACH_REMOTE_DEBUGGER_AT_BOOT
+     depends on ENABLE_REMOTE_DEBUGGING
+     bool "Attach the remote debugger at boot"
+     default n
+     help
+       Attach the remote debugger as part of the initialization
+       process at boot, before other CPUs are up
+
+    config DEBUG_REMOTE_DEBUGGER
+     depends on ENABLE_REMOTE_DEBUGGING
+     bool "Debug Remote Debugger"
+     default n
+     help
+        Turn on debug prints for the remote debugger subsystem
+
+    config ENABLE_MONITOR
+      depends on !HVM_HRT 
+      bool "Enable Monitor"
+      default n
+      help
+        This adds a built in monitor to Nautilus.  You probably also want to enable the watchdog
+
+    config DEBUG_PAGING
+      bool "Debug Paging"
+      depends on DEBUG_PRINTS
+      default n
+      help
+        Turn on debug prints for paging subsystem
+
+    config DEBUG_BOOTMEM
+      bool "Debug Bootmem Allocator"
+      depends on DEBUG_PRINTS
+      default n
+      help
+        Turn on debugging for the boot memory allocator
+
+    config DEBUG_CMDLINE
+      bool "Debug Command Line Processing"
+      depends on DEBUG_PRINTS
+      default n
+      help
+        Turn on debugging for the kernel command line processor
+
+    config DEBUG_TESTS
+      bool "Debug Testing Framework"
+      depends on DEBUG_PRINTS
+      default n
+      help
+        Turn on debugging for the kernel testing framework
+
+    config DEBUG_BUDDY
+      bool "Debug Buddy Allocator"
+      depends on DEBUG_PRINTS
+      default n
+      help
+        Turn on debugging for the buddy allocator
+
+    config DEBUG_KMEM
+      bool "Debug Kernel Memory Allocator"
+      depends on DEBUG_PRINTS
+      default n
+      help
+         Turn on debugging for the high-level kernel
+         memory allocator (malloc/free)
+
+    config DEBUG_FPU
+      bool "Debug FPU"
+      depends on DEBUG_PRINTS
+      default n
+      help
+        Turn on debug prints for FPU related code (SIMD,MMX,SSE,etc.)
+	NOTE: Output during FPU init can result in boot failure
+	      if your compiler has optimized print functions assuming
+	      the FPU is already working
+
+    config DEBUG_SMP
+      bool "Debug SMP"
+      depends on DEBUG_PRINTS
+      default n
+      help
+        Turn on debug prints for SMP code
+
+    config DEBUG_SHELL
+      bool "Debug Shell"
+      depends on DEBUG_PRINTS
+      default n
+      help
+        Turn on debug prints for the shell
+
+
+    config DEBUG_HRT
+      bool "Debug HRT"
+      depends on DEBUG_PRINTS && HVM_HRT
+      default n
+      help
+        Turn on debug prints for HRT/HVM code
+
+    config DEBUG_SFI
+      bool "Debug SFI"
+      depends on DEBUG_PRINTS
+      default n
+      help 
+        Turn on debug prints for SFI platform firmware code
+
+    config DEBUG_CXX
+      bool "Debug C++"
+      depends on DEBUG_PRINTS
+      default n
+      help
+        Turn on debug prints for C++ initialization/support code
+
+    config DEBUG_THREADS
+      bool "Debug Threads"
+      depends on DEBUG_PRINTS
+      default n
+      help
+        Turn on debug prints for threads
+
+    config DEBUG_FIBERS
+      bool "Debug Fibers"
+      depends on DEBUG_PRINTS && FIBER_ENABLE
+      default n
+      help
+        Turn on debug prints for fibers
+
+    config DEBUG_TASKS
+      bool "Debug Tasks"
+      depends on DEBUG_PRINTS
+      default n
+      help
+        Turn on debug prints for tasks
+
+    config DEBUG_WAITQUEUES
+      bool "Debug Wait Queues"
+      depends on DEBUG_PRINTS
+      default n
+      help
+        Turn on debug prints for wait queues
+	YOU PROBABLY DO NOT WANT TO DO THIS - SEE COMMENTS
+
+config DEBUG_FUTURES
+      bool "Debug Futures"
+      depends on DEBUG_PRINTS
+      default n
+      help
+        Turn on debug prints for futures
+
+config DEBUG_GROUP
+      bool "Debug Groups"
+      depends on DEBUG_PRINTS
+      default n
+      help
+        Turn on debug prints for group
+
+    config DEBUG_GROUP_BARRIER
+      bool "Debug Group Barrier"
+      depends on DEBUG_GROUP
+      default n
+      help
+        Turn on debug prints for group barrier
+
+    config DEBUG_SCHED
+      bool "Debug Scheduler"
+      depends on DEBUG_PRINTS
+      default n
+      help
+        Turn on debug prints for the scheduler
+
+    config DEBUG_GROUP_SCHED
+      bool "Debug Group Scheduling"
+      depends on DEBUG_PRINTS
+      default n
+      help
+        Turn on debug prints for group scheduling
+
+    config DEBUG_TIMERS
+      bool "Debug Timers"
+      depends on DEBUG_PRINTS
+      default n
+      help
+        Turn on debug prints for timer subsystem
+
+    config DEBUG_SEMAPHORES
+      bool "Debug Semaphores"
+      depends on DEBUG_PRINTS
+      default n
+      help
+        Turn on debug prints for semaphores
+
+    config DEBUG_MSG_QUEUES
+      bool "Debug Message Queues"
+      depends on DEBUG_PRINTS
+      default n
+      help
+        Turn on debug prints for message queues
+
+    config DEBUG_SYNCH
+      bool "Debug Synchronization"
+      depends on DEBUG_PRINTS
+      default n
+      help
+        Turns on debug prints for synchronization functions
+        (rwlock, condvar)
+
+    config DEBUG_BARRIER
+      bool "Debug Barriers"
+      depends on DEBUG_PRINTS
+      default n
+      help
+        Turns on debug prints for barriers
+
+    config DEBUG_NUMA
+      bool "Debug NUMA code"
+      depends on DEBUG_PRINTS
+      default n
+      help
+        Turns on debug prints for NUMA code
+
+    config DEBUG_VIRTUAL_CONSOLE
+      bool "Debug Virtual Console"
+      default n
+      help
+        Turn on debug output for VC
+
+    config DEBUG_DEV
+      bool "Debug Base Device Interface"
+      default n
+      help
+        Turn on debug output for base device interface
+    config DEBUG_CHARDEV
+      bool "Debug Character Device Interface"
+      depends on DEBUG_DEV
+      default n
+      help
+        Turn on debug output for character device interface
+    config DEBUG_BLKDEV
+      bool "Debug Block Device Interface"
+      depends on DEBUG_DEV
+      default n
+      help
+        Turn on debug output for block device interface
+    config DEBUG_NETDEV
+      bool "Debug Network Device Interface"
+      depends on DEBUG_DEV
+      default n
+      help
+        Turn on debug output for network device interface
+    config DEBUG_PARTITION
+      bool "Debug Partitioning"
+      depends on PARTITION_SUPPORT && DEBUG_DEV
+      default n
+      help
+        Turn on debug output for partitioning
+
+config DEBUG_FILESYSTEM
+        bool "Debug Base Filesystem Interface"
+        depends on DEBUG_PRINTS
+        default n
+        help
+                Turn on debug prints for the filesystem interface
+
+config DEBUG_LOADER
+        bool "Debug loader"
+        depends on DEBUG_PRINTS
+        default n
+        help
+                Turn on debug prints for the loader
+
+config DEBUG_LINKER
+        bool "Debug linker"
+        depends on DEBUG_PRINTS
+        default n
+        help
+                Turn on debug prints for the dynamic linker
+
+config DEBUG_PMC
+        bool "Debug performance counters"
+        depends on DEBUG_PRINTS
+        default n
+        help
+                Turn on debug prints for the performance counter (PMC) subsystem
+
+config DEBUG_PROCESSES
+      bool "Debug processes"
+      depends on DEBUG_PRINTS
+      default n
+      help
+        Turn on debug prints for processes
+
+config DEBUG_LINUX_SYSCALLS
+      bool "Debug Linux Syscalls"
+      depends on DEBUG_PRINTS && LINUX_SYSCALLS
+      default n
+      help
+        Turn on debug prints for Linux Syscall emulation
+
+endmenu
+
+menu "Address Spaces"
+        config ASPACES
+	  bool "Enable Address Spaces"
+	  default n
+	  depends on X86_64_HOST
+	  select ASPACE_BASE
+	  help
+	     Enable address space abstractions plus address space
+	     switching on thread context switches
+	     
+	config DEBUG_ASPACES
+	  bool "Debug address space core"
+	  depends on ASPACES
+	  default n
+	  help
+	     Turn on debugging prints for the address space core
+	     
+	config ASPACE_BASE
+	  bool "Base abstraction"
+	  depends on ASPACES
+	  default y
+	  help
+	     This is the base address space abstraction
+	     which is the single, identity-mapped address space
+	     but now it has a name.   This must always be available
+
+	config DEBUG_ASPACE_BASE
+	  bool "Debug the base address space abstraction"
+	  depends on ASPACE_BASE
+	  default n
+	  help
+	     Turn on debugging prints for the paging address space abstraction
+
+        config ASPACE_PAGING
+	  bool "Paging abstraction"
+	  depends on ASPACES
+	  default y
+	  help
+	     This is the paging address space abstraction.
+	     It does lazy build of identity-mapped page tables, plus
+	     it allows creation of non-identity-mapped addresses
+	
+	  choice
+      	  	depends on ASPACE_PAGING
+          	prompt "Paging Region data structure"
+          	default ASPACE_PAGING_REGION_RB_TREE
+
+          	config ASPACE_PAGING_REGION_RB_TREE
+           	  bool "Red Black Tree"
+
+          	config ASPACE_PAGING_REGION_SPLAY_TREE
+              	  bool "Splay Tree"
+
+          	config ASPACE_PAGING_REGION_LINKED_LIST
+              	  bool "Linked List"
+
+                config ASPACE_PAGING_REGION_SKIP_LIST
+                  bool "Skip List"
+    	  endchoice
+
+
+	 config ASPACE_PAGING_1GB
+            bool "Huge Page 1GB "
+            depends on ASPACE_PAGING
+            default y
+            help
+              Enable 1GB Huge Page for region aligned with 1GB and length as multiple of 1GB
+
+       config ASPACE_PAGING_2MB
+         bool "Large Page 2MB"
+         depends on ASPACE_PAGING
+         default y
+         help
+           Enable 2MB Large Page for region aligned with 2MB and length as multiple of 2MB
+
+       config ASPACE_PAGING_REGION_STRUCT_TEST
+         bool "Test region tracking data structures"
+         depends on ASPACE_PAGING
+         default n
+         help
+          Test red black tree, splay tree, and linked list against each other
+
+       config ASPACE_PAGING_PCID
+      	bool "PCID for Paging"
+      	depends on ASPACE_PAGING
+      	default y
+      	help
+        Enable PCID support for paging address aspace
+
+      	choice
+        depends on ASPACE_PAGING_PCID
+            prompt "PCID implementation"
+            default ASPACE_PAGING_PCID_QUEUE
+
+            config ASPACE_PAGING_PCID_QUEUE
+                bool "Queue"
+
+            config ASPACE_PAGING_PCID_BITMAP
+                bool "Bitmap"
+
+    	endchoice
+
+
+       config DEBUG_ASPACE_PAGING
+	  bool "Debug the paging address space abstraction"
+	  depends on ASPACE_PAGING
+	  default n
+	  help
+	     Turn on debugging prints for the paging address space abstraction
+
+        config ASPACE_CARAT
+	  bool "CARAT  abstraction"
+	  depends on ASPACES
+	  default y
+	  help
+	     This is the CARAT address space abstraction.
+	     
+	config DEBUG_ASPACE_CARAT
+	  bool "Debug the CARAT address space abstraction"
+	  depends on ASPACE_CARAT
+	  default n
+	  help
+	     Turn on debugging prints for the CARAT address space abstraction
+
+	choice
+            depends on ASPACE_CARAT
+            prompt "CARAT Region data structure"
+            default ASPACE_CARAT_REGION_RB_TREE
+
+            config ASPACE_CARAT_REGION_RB_TREE
+               bool "Red Black Tree"
+
+            config ASPACE_CARAT_REGION_SPLAY_TREE
+               bool "Splay Tree"
+
+            config ASPACE_CARAT_REGION_LINKED_LIST
+               bool "Linked List"
+
+            config ASPACE_CARAT_REGION_SKIP_LIST
+               bool "Skip List"
+       endchoice
+
+  config CARAT_PROFILE
+    bool "Enable profiling for CARAT aspace"
+    depends on ASPACE_CARAT
+    default n
+    help
+      Turns on profiling for CARAT Aspace
+
+  config DEBUG_ASPACE_REGION_TRACKING
+    bool "Debug the selected region tracking data structure (RBTree/SplayTree/..)"
+	  depends on ASPACES
+	  default y
+	  help
+	     Turn on debugging prints for selected region tracking data structure
+endmenu
+
+menu "Allocators"
+        config ALLOCS
+	  bool "Enable Allocators"
+	  default n
+	  depends on X86_64_HOST
+	  select ALLOC_BASE
+	  help
+	     Enable allocator abstractions
+	     
+	config DEBUG_ALLOCS
+	  bool "Debug allocators core"
+	  depends on ALLOCS
+	  default n
+	  help
+	     Turn on debugging prints for the allocator core
+
+	config ALLOC_BASE
+	  bool "Base allocator"
+	  depends on ALLOCS
+	  default y
+	  help
+	     This is the base allocator, just a wrapper on the system allocator
+
+        config DEBUG_ALLOC_BASE
+	  bool "Debug the base allocator"
+	  depends on ALLOC_BASE
+	  default n
+	  help
+	     Turn on debugging prints for the base allocator
+
+	config ALLOC_CS213
+	  bool "CS213 Implicit Free allocator"
+	  depends on ALLOCS
+	  default n
+	  help
+	     Implicit Free list implementation
+
+        config DEBUG_ALLOC_CS213
+	  bool "Debug the cs213 allocator"
+	  depends on ALLOC_CS213
+	  default n
+	  help
+	     Turn on debugging prints for the cs213 allocator
+
+        config TEST_ALLOC_CS213
+	  bool "Test the CS213 Allocator"
+	  depends on ALLOC_CS213
+	  default n
+	  help
+	     Allocator test program
+       config TEST_TRACE_ALLOC_CS213
+	  bool "Test the CS213 Allocator using a trace"
+	  depends on ALLOC_CS213
+	  default n
+	  help
+	     Allocator test program w/trace
+
+  config ALLOC_DUMB
+	  bool "Dumb allocator"
+	  depends on ALLOCS
+	  default n
+	  help
+	     This allocator never deallocates, but allocates in constant time
+
+        config DEBUG_ALLOC_DUMB
+	  bool "Debug the dumb allocator"
+	  depends on ALLOC_DUMB
+	  default n
+	  help
+	     Turn on debugging prints for the dumb allocator
+    config ALLOC_TEST
+	  bool "Allocator Test"
+	  depends on ALLOCS
+	  default n
+	  help
+	     test framework for allocator.
+
+        config DEBUG_ALLOC_TEST
+	  bool "Debug allocator test"
+	  depends on ALLOC_TEST
+	  default n
+	  help
+	     Turn on debugging prints for the allocator test
+endmenu
+
+menu "Runtimes"
+
+        config LEGION_RT
+          bool "Legion RT"
+          depends on CXX_SUPPORT
+          
+        config LEGION_RT_ROOT
+            string "Legion RT Root"
+            depends on LEGION_RT
+            help 
+              Directory where the intended Legion runtime is installed
+
+        config LEGION_RT_DEBUG
+            bool "Legion RT Deep Debugging"
+            default n
+            depends on LEGION_RT
+            help
+              Turns on deep debugging prints for legion runtime in Nautilus
+
+        config NDPC_RT
+          bool  "NDPC RT"
+          depends on CXX_SUPPORT
+	  help
+	     Include the NDPC run-time
+
+        config NDPC_RT_DEBUG
+            bool "Debug NDPC RT";
+	    default n
+            depends on NDPC_RT
+            help 
+              Debugging output for the NDPC RT
+
+        config NDPC_RT_TESTS
+            bool "Include tests/benchmarks for NDPC RT";
+	    default n
+            depends on NDPC_RT
+            help 
+              Include NDPC simple tests 
+
+	config NESL_RT
+          bool  "NESL RT"
+	  default n
+	  help
+	     Include the NESL run-time (VCODE engine)
+
+        config NESL_RT_DEBUG
+            bool "Debug NESL RT";
+	    default n
+            depends on NESL_RT
+            help 
+              Debugging output for the NESL RT
+
+        config NESL_RT_TESTS
+            bool "Include tests/benchmarks for NESL RT";
+	    default n
+            depends on NESL_RT
+            help 
+              Include NESL simple tests 
+
+        config OPENMP_RT
+          bool  "OpenMP RT"
+	  default n
+	  help
+	      Include the GOMP-compatible OpenMP run-time
+
+        choice
+	    depends on OPENMP_RT
+            prompt "OpenMP RT"
+            default OPENMP_RT_OMP
+
+          config OPENMP_RT_OMP
+              bool "CLANG-compatible (OMP)"
+
+          config OPENMP_RT_GOMP
+              bool "GNU-compatible (GOMP) [going away]"
+
+        endchoice
+	
+        config OPENMP_RT_DEBUG
+            bool "Debug OpenMP RT";
+	    default n
+            depends on OPENMP_RT
+            help 
+              Debugging output for the OpenMP RT
+
+        config OPENMP_RT_TESTS
+            bool "Include tests/benchmarks for OpenMP RT"
+	    default n
+            depends on OPENMP_RT
+            help 
+              Include OpenMP simple tests and Edinburgh microbenchmarks
+
+        config RACKET_RT
+            bool "Racket RT (via Multiverse)"
+	    default y
+            help 
+              Racket support (via Multiverse only - no special code)
+
+        config CARAT_RT
+            bool "CARAT RT"
+	    default n 
+            help 
+              CARAT support in Nautilus --- useless without compiling the
+			  kernel without the CARAT transforms 
+
+
+endmenu
+
+source "src/dev/Kconfig"
+
+source "src/fs/Kconfig"
+
+source "src/net/Kconfig"
+
+menu "Languages"
+
+	config LOAD_LUA
+		bool "Enable Lua support in Nautilus"
+		default n
+		help 
+		  Initial port of he Lua 5.2.4 runtime to Nautilus
+
+	config LUA_TEST
+		bool "Test framework for invoking Nautilus functions from Lua"
+		default n
+		depends on LOAD_LUA
+		help
+		  Nautilus functionas are made available to Lua externally
+
+endmenu
+

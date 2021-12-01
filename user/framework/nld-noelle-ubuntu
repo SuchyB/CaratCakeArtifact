@@ -1,0 +1,125 @@
+#!/bin/bash
+
+# This script needs to be extended to automatically
+# find the paths to the crt objects
+
+CMD=""
+if [ $# -eq 0 ]
+  then
+    echo "No arguments supplied"
+else
+  CMD=$1
+  shift ;
+fi
+
+REALPATH=$(realpath $0)
+DIRNAME=$(dirname $REALPATH)
+
+CRTGEN_DIR=/usr/lib64
+CRTBE_DIR=/usr/lib/gcc/x86_64-redhat-linux/8
+OUT_FLAG=$(echo "$@" | grep -Poe "-o\ .*?(\ |$)")
+echo $OUT_FLAG
+
+
+if [[ ${CMD} -ne "-flinux" ]]
+then
+  make clean -C $DIRNAME
+  make framework -C $DIRNAME
+fi
+
+
+if [[ $* != *-nokarat* ]]; then
+  USER_OBJ=target.o
+  BLOB_OBJ=blob.o
+  BLOB_BC=blob.bc
+  BLOB_SIMPLIFY_BC=blob_simplify.bc
+  BLOB_OPT_BC=blob_opt.ll
+  FRAMEWORK_LINK_BC=$DIRNAME/framework_link.bc
+  KARAT_OUT=karat.out
+  BLOB_KOBJ=blob.kobj.o
+  LD=ld
+  EXTRACTBC=get-bc
+  NORM=noelle-norm
+  ME=noelle-load
+
+  set -x
+
+  # Simply link source object files
+  ld -r $@ -o ${BLOB_OBJ} 
+
+  # Extract the bitcode
+  ${EXTRACTBC} ${BLOB_OBJ}
+  mv ${BLOB_OBJ}.bc ${BLOB_BC}
+  llvm-dis ${BLOB_BC}
+
+  # Run LICM, normalize code for Noelle + pass (NOTE --- noelle-enable normalizes automatically)
+  opt -O3 --disable-slp-vectorization ${BLOB_BC} -o ${BLOB_BC}
+  ${NORM} ${BLOB_BC} -o ${BLOB_SIMPLIFY_BC}
+  noelle-enable ${BLOB_SIMPLIFY_BC} ${BLOB_SIMPLIFY_BC} -noelle-disable-inliner -noelle-disable-scev-simplification -noelle-disable-loop-distribution -noelle-disable-whilifier
+
+  # Link framework bitcode 
+if [[ ${CMD} == "-flinux" ]]
+then
+  llvm-dis ${BLOB_SIMPLIFY_BC}
+else
+  llvm-link ${BLOB_SIMPLIFY_BC} ${FRAMEWORK_LINK_BC} -o ${BLOB_SIMPLIFY_BC} 
+  llvm-dis ${BLOB_SIMPLIFY_BC}
+fi
+
+
+  # Run the KARAT pass
+if [[ ${CMD} == "-fall" ]]
+then
+  # KARAT on completely (protections + tracking)
+  ${ME} -load ~/CAT/lib/KARAT.so -karat -target-user -fno-restrictions -S ${BLOB_SIMPLIFY_BC} -o ${BLOB_OPT_BC} &> ${KARAT_OUT}
+
+elif [[ ${CMD} == "-fno-protections" ]]
+then
+  # KARAT on ONLY for tracking, NO protections 
+  ${ME} -load ~/CAT/lib/KARAT.so -karat -target-user -fno-protections -fno-restrictions -S ${BLOB_SIMPLIFY_BC} -o ${BLOB_OPT_BC} &> ${KARAT_OUT}
+
+elif [[ ${CMD} == "-fno-all" ]]
+then
+  # KARAT off completely (pass is not run)
+  cp ${BLOB_SIMPLIFY_BC} ${BLOB_OPT_BC}
+
+elif [[ ${CMD} == "-flinux" ]]
+then
+  # KARAT off completely (pass is not run)
+  cp ${BLOB_SIMPLIFY_BC} ${BLOB_OPT_BC}
+  opt -O3 -S ${BLOB_OPT_BC} -o ${BLOB_OPT_BC}
+  clang -c -O3 -fPIC ${BLOB_OPT_BC} -o target.o
+  # clang -O3 ${BLOB_OPT_BC} -static-pie -fPIC -lm -lpthread -ldl -mcmodel=large $OUT_FLAG
+  ld -static -pie --no-dynamic-linker \
+    -dp -z max-page-size=0x1000 -z relro -z now \
+    $CRTGEN_DIR/rcrt1.o $CRTGEN_DIR/crti.o $CRTBE_DIR/crtbeginS.o \
+    -L$CRTBE_DIR/ -L$CRTGEN_DIR -L/usr/lib \
+    target.o \
+    -lm -ldl --start-group -lgcc -lgcc_eh -lpthread -lc -lrt --end-group \
+    $CRTBE_DIR/crtendS.o $CRTGEN_DIR/crtn.o \
+    $OUT_FLAG 
+  exit 0 ; 
+fi 
+
+  # Optimize the transformed bitcode, build target object
+  opt -O3 -S ${BLOB_OPT_BC} -o ${BLOB_OPT_BC}
+  clang -mno-red-zone -fPIC -O3 -c ${BLOB_OPT_BC} -o target.o
+
+fi 
+# else
+#   echo "Called with -nokarat"
+#   set -x
+#   SNIPPED_ARGS=$(echo $* | sed 's/-nokarat//')
+#   ld -r $SNIPPED_ARGS $DIRNAME/glue.o $DIRNAME/framework.o -o target.o
+# fi
+
+# /home/arn9233 is included because of static libomp.a, which doesn't typically exist.
+# framework_low_level has to be linked in this step, otherwise the multiboot header will be discarded.
+ld -static -pie --no-dynamic-linker \
+  -T $DIRNAME/framework.lds -dp -z max-page-size=0x1000 -z relro -z now \
+  $CRTGEN_DIR/rcrt1.o $CRTGEN_DIR/crti.o $CRTBE_DIR/crtbeginS.o \
+  -L$CRTBE_DIR/ -L$CRTGEN_DIR -L/usr/lib \
+  $DIRNAME/glue.o $DIRNAME/framework.o target.o $DIRNAME/framework_low_level.o \
+  -lm -lstdc++ -ldl --start-group -lgcc -lgcc_eh -lpthread -lc -lrt --end-group \
+  $CRTBE_DIR/crtendS.o $CRTGEN_DIR/crtn.o \
+  $OUT_FLAG

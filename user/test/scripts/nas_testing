@@ -1,0 +1,54 @@
+#!/bin/bash
+
+BENCH=$1
+CLASS_NAME=$2
+KARAT_FLAGS=$3
+MNT=$4
+
+NAS=${NAUT}/user/test/NAS
+
+# NAUT=environment var is set to your top level nautilus directory
+FW=${NAUT}/user/framework
+echo ${NAUT} ;
+echo ${FW} ;
+
+# Check for ramdisk in nautilus directory
+if [ ! -f "${NAUT}/ramdisk.img" ]
+then
+    echo "ramdisk.img is missing in your Nautilus directory!" ;
+    exit 1 ;
+fi
+
+
+# Mount
+echo "Mounting ..."
+mkdir -p ${MNT}
+guestunmount ${MNT} ;
+guestmount -a ${NAUT}/ramdisk.img -m /dev/sda ${MNT} ;
+
+
+# Set up user framework, FW is set in environment
+echo "Setting up framework ..."
+cd ${FW} && \
+    make clean ; \
+    make framework ;
+
+
+# Set up NAS suite, build benchmark
+echo "Building benchmark ..."
+cd ${NAS} && \
+    make clean ; \
+    cd ${NAS}/${BENCH} && \
+    make clean ; \
+    make CLASS=${CLASS_NAME} KARAT=${KARAT_FLAGS} && \
+    cp ${NAS}/bin/${BENCH,,}.${CLASS_NAME} ${MNT}/${BENCH}.EXE ; \
+
+# Unmount 
+echo "Unmounting...";
+guestunmount ${MNT} ;
+touch ${NAUT}/src/asm/ramdisk.s
+echo "Done!"
+
+
+
+

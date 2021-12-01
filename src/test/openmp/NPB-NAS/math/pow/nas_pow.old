@@ -1,0 +1,39 @@
+
+#ifndef _NAS_POW_H_
+#define _NAS_POW_H_
+#include "exp.h"
+static double _exp(double a){
+  union { double d; long long x; } u, v;
+  u.x = (long long)(3248660424278399LL * a + 0x3fdf127e83d16f12LL);
+  v.x = (long long)(0x3fdf127e83d16f12LL - 3248660424278399LL * a);
+  return u.d / v.d;
+}
+
+static double ___exp(double a){
+
+ return _exp(a/2)/_exp(-a/2);
+}
+
+static double pow(double a, double b) {
+  int flipped = 0;
+  if (b < 0) {
+    flipped = 1;
+    b = -b;
+  }
+
+  /* calculate approximation with fraction of the exponent */
+  int e = (int) b;
+  double d = exp(b - e);
+
+  double r = 1.0;
+  while (e) {
+    if (e & 1) r *= a;
+    a *= a;
+    e >>= 1;
+  }
+
+  r *= d;
+  return flipped ? 1.0/r : r;
+}
+
+#endif

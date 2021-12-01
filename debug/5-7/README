@@ -1,0 +1,13 @@
+bin
+--------
+- working.bin, working.iso --- binary and iso generated for the (sometime) working
+  version of the allocation pass, based on commit hash: f3391bb8259745391238cde0c7d522a4f4adbb00 
+
+output
+--------
+- redundant.out --- combine redundant instructions bug in @main --- new error
+- working.ll, working_opt.ll --- bitcode sources (pre and post transform) generated
+  for the (sometime) working version of the allocation pass, based on the commit
+  hash: f3391bb8259745391238cde0c7d522a4f4adbb00
+
+

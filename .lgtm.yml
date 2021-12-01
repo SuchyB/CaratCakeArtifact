@@ -1,0 +1,10 @@
+path_classifiers:
+    test:
+        - src/test
+        - include/test
+
+extraction:
+    cpp:
+        configure:
+            command: 
+                - make defconfig
